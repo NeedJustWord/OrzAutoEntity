@@ -46,6 +46,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoEntityCmd.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Helpers\DTEHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrzAutoEntityPackage.cs" />
   </ItemGroup>
