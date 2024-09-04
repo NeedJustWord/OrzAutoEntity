@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="OrzAutoEntity.da27ae82-b798-4807-9810-670c957071fb" Version="1.0" Language="en-US" Publisher="Company" />
+        <Identity Id="OrzAutoEntity.da27ae82-b798-4807-9810-670c957071fb" Version="1.0" Language="zh-CN" Publisher="Company" />
         <DisplayName>OrzAutoEntity</DisplayName>
         <Description xml:space="preserve">实体类生成工具</Description>
     </Metadata>
