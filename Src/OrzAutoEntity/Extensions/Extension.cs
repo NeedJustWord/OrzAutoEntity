@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 
 namespace System
@@ -15,6 +16,7 @@ namespace System
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Replace("_", "");
         }
 
+        #region 数据库扩展
         /// <summary>
         /// 转换成字符串
         /// </summary>
@@ -23,7 +25,38 @@ namespace System
         /// <returns></returns>
         public static string AsString(this object obj, string defaultValue = "")
         {
-            return obj == null ? defaultValue : obj.ToString();
+            return obj.IsNull() ? defaultValue : obj.ToString();
+        }
+
+        /// <summary>
+        /// 转换成int
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="defaultValue">为null时的默认值</param>
+        /// <returns></returns>
+        public static int AsInt(this object obj, int defaultValue = 0)
+        {
+            return obj.IsNull() ? defaultValue : Convert.ToInt32(obj);
+        }
+
+        /// <summary>
+        /// 转换成bool
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="defaultValue">为null时的默认值</param>
+        /// <returns></returns>
+        public static bool AsBool(this object obj, bool defaultValue = false)
+        {
+            if (obj.IsNull()) return defaultValue;
+            switch (obj.ToString().ToUpper())
+            {
+                case "1":
+                case "Y":
+                case "YES":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
@@ -36,6 +69,15 @@ namespace System
             cmd.Parameters.Clear();
 
             if (param == null) return;
+
+            if (param is Dictionary<string, object> dict)
+            {
+                foreach (var item in dict)
+                {
+                    AddParameter(cmd, item.Key, item.Value);
+                }
+                return;
+            }
 
             var t = param.GetType();
             var paramInfos = t.GetProperties();
@@ -52,5 +94,11 @@ namespace System
             p.Value = value ?? DBNull.Value;
             cmd.Parameters.Add(p);
         }
+
+        private static bool IsNull(this object obj)
+        {
+            return obj == null || obj == DBNull.Value;
+        }
+        #endregion
     }
 }

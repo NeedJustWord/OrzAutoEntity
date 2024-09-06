@@ -2,7 +2,7 @@
 
 namespace OrzAutoEntity.Modes
 {
-    public struct TableInfo
+    public class TableInfo
     {
         /// <summary>
         /// 表名

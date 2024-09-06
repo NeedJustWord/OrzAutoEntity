@@ -2,8 +2,13 @@
 
 namespace OrzAutoEntity.Modes
 {
-    public struct ColumnInfo
+    public class ColumnInfo
     {
+        /// <summary>
+        /// 表名/视图名
+        /// </summary>
+        public string TableName { get; set; }
+
         /// <summary>
         /// 列名
         /// </summary>
