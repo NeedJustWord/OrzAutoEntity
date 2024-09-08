@@ -3,12 +3,18 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OrzAutoEntity.DataAccess;
+using OrzAutoEntity.Helpers;
 
 namespace UnitTest
 {
     [TestClass]
     public class DatabaseTest
     {
+        public DatabaseTest()
+        {
+            ConfigHelper.Init("");
+        }
+
         #region TestGetTableInfos
         [TestMethod]
         public void TestOracleGetTableInfos()

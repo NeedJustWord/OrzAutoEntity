@@ -45,7 +45,7 @@ namespace OrzAutoEntity.Modes
         public string Type => AllowNull && ClrType != "string" && ClrType != "byte[]" ? $"{ClrType}?" : ClrType;
 
         /// <summary>
-        /// 长度，数字时表示整数位长度
+        /// 长度，数字时表示精度
         /// </summary>
         public int Length { get; set; }
 

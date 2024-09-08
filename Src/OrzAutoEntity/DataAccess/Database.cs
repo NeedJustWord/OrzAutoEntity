@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Dm;
 using Oracle.ManagedDataAccess.Client;
+using OrzAutoEntity.Helpers;
 using OrzAutoEntity.Modes;
 
 namespace OrzAutoEntity.DataAccess
@@ -18,6 +19,7 @@ namespace OrzAutoEntity.DataAccess
             this.connStr = connStr;
         }
 
+        protected abstract DatabaseType DatabaseType { get; }
         protected abstract IDbConnection GetConnection();
         public abstract List<TableInfo> GetTableInfos();
         public abstract List<TableInfo> GetColumnInfos(List<TableInfo> tableInfos);
@@ -57,7 +59,12 @@ namespace OrzAutoEntity.DataAccess
                 table.ColumnInfos = dict[table.Name];
                 table.ColumnInfos.ForEach(t =>
                 {
+                    if (TypeMapping.IsNumber(DatabaseType, t.DbType))
+                    {
+                        t.DbType = $"{t.DbType}({t.Length},{t.Scale})";
+                    }
                     t.IsView = table.IsView;
+                    t.ClrType = TypeMapping.GetClrType(DatabaseType, t.DbType);
                 });
             }
             return tableInfos;
@@ -98,6 +105,8 @@ namespace OrzAutoEntity.DataAccess
 
     class OracleDatabase : Database
     {
+        protected override DatabaseType DatabaseType => DatabaseType.Oracle;
+
         public OracleDatabase(string connStr) : base(connStr)
         {
         }
@@ -148,7 +157,7 @@ select t.table_name,
        t.data_type,
        case
          when t.data_type = 'NUMBER' then
-          t.data_precision - t.data_scale
+          t.data_precision
          else
           t.data_length
        end as data_length,
@@ -195,6 +204,8 @@ select t.table_name,
 
     class DmDatabase : Database
     {
+        protected override DatabaseType DatabaseType => DatabaseType.Dm;
+
         public DmDatabase(string connStr) : base(connStr)
         {
         }
@@ -247,7 +258,7 @@ select t.table_name,
        t.data_type,
        case
          when t.data_type = 'NUMBER' then
-          t.data_precision - t.data_scale
+          t.data_precision
          else
           t.data_length
        end as data_length,

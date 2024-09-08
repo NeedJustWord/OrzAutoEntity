@@ -52,8 +52,11 @@
     <Compile Include="Extensions\Extension.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\DTEHelper.cs" />
+    <Compile Include="Helpers\TypeMapping.cs" />
     <Compile Include="Modes\ColumnInfo.cs" />
+    <Compile Include="Modes\DatabaseConfig.cs" />
     <Compile Include="Modes\TableInfo.cs" />
+    <Compile Include="Modes\TemplateConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OrzAutoEntityPackage.cs" />
   </ItemGroup>
