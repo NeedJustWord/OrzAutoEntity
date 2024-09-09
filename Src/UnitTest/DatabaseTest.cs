@@ -3,18 +3,12 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OrzAutoEntity.DataAccess;
-using OrzAutoEntity.Helpers;
 
 namespace UnitTest
 {
     [TestClass]
-    public class DatabaseTest
+    public class DatabaseTest : BaseTest
     {
-        public DatabaseTest()
-        {
-            ConfigHelper.Init("");
-        }
-
         #region TestGetTableInfos
         [TestMethod]
         public void TestOracleGetTableInfos()
@@ -48,10 +42,15 @@ namespace UnitTest
             TestGetColumnInfos(GetDmDatabase());
         }
 
-        private void TestGetColumnInfos(Database db)
+        private void TestGetColumnInfos(Database db, params string[] tableNames)
         {
             var tableInfos = db.GetTableInfos();
-            tableInfos = db.GetColumnInfos(tableInfos);
+            if (tableNames.Length > 0)
+            {
+                tableInfos = tableInfos.Where(t => tableNames.Contains(t.Name, StringComparer.OrdinalIgnoreCase)).ToList();
+            }
+
+            tableInfos = db.FillColumnInfos(tableInfos);
             WriteJson(tableInfos);
         }
         #endregion
@@ -77,14 +76,14 @@ namespace UnitTest
             {
                 Run($"数据量：{tableInfos.Count}", () =>
                 {
-                    db.GetColumnInfos(tableInfos);
+                    db.FillColumnInfos(tableInfos);
                 });
                 tableInfos = tableInfos.Take(tableInfos.Count / 2).ToList();
             }
 
             Run($"数据量：0", () =>
             {
-                db.GetColumnInfos(null);
+                db.FillColumnInfos(null);
             });
         }
         #endregion

@@ -22,7 +22,7 @@ namespace OrzAutoEntity.DataAccess
         protected abstract DatabaseType DatabaseType { get; }
         protected abstract IDbConnection GetConnection();
         public abstract List<TableInfo> GetTableInfos();
-        public abstract List<TableInfo> GetColumnInfos(List<TableInfo> tableInfos);
+        public abstract List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos);
 
         protected void GetParamSql(List<TableInfo> tableInfos, string prefix, out string paramSql, out Dictionary<string, object> param)
         {
@@ -48,7 +48,7 @@ namespace OrzAutoEntity.DataAccess
                 return columnInfos.GroupBy(t => t.TableName).Select(t => new TableInfo
                 {
                     Name = t.Key,
-                    ColumnInfos = t.ToList(),
+                    Columns = t.ToList(),
                     Comment = "",
                 }).ToList();
             }
@@ -56,14 +56,13 @@ namespace OrzAutoEntity.DataAccess
             var dict = columnInfos.GroupBy(t => t.TableName).ToDictionary(t => t.Key, t => t.ToList());
             foreach (var table in tableInfos)
             {
-                table.ColumnInfos = dict[table.Name];
-                table.ColumnInfos.ForEach(t =>
+                table.Columns = dict[table.Name];
+                table.Columns.ForEach(t =>
                 {
                     if (TypeMapping.IsNumber(DatabaseType, t.DbType))
                     {
                         t.DbType = $"{t.DbType}({t.Length},{t.Scale})";
                     }
-                    t.IsView = table.IsView;
                     t.ClrType = TypeMapping.GetClrType(DatabaseType, t.DbType);
                 });
             }
@@ -132,7 +131,7 @@ namespace OrzAutoEntity.DataAccess
             return result;
         }
 
-        public override List<TableInfo> GetColumnInfos(List<TableInfo> tableInfos)
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
         {
             Dictionary<string, object> param;
             string where1, where2;
@@ -231,7 +230,7 @@ select t.table_name,
             return result;
         }
 
-        public override List<TableInfo> GetColumnInfos(List<TableInfo> tableInfos)
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
         {
             Dictionary<string, object> param;
             string where1, where2, where3;

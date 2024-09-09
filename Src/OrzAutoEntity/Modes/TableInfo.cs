@@ -1,13 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace OrzAutoEntity.Modes
 {
     public class TableInfo
     {
         /// <summary>
-        /// 表名
+        /// 表名/视图名
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 驼峰格式的表名/视图名
+        /// </summary>
+        public string CamelName => Name.GetCamelCaseName();
+
+        /// <summary>
+        /// 小写格式的表名/视图名
+        /// </summary>
+        public string LowerName => Name.ToLower();
 
         /// <summary>
         /// 是否是视图
@@ -22,6 +33,6 @@ namespace OrzAutoEntity.Modes
         /// <summary>
         /// 字段信息
         /// </summary>
-        public List<ColumnInfo> ColumnInfos { get; set; }
+        public List<ColumnInfo> Columns { get; set; }
     }
 }

@@ -42,10 +42,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseTest.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigTest.cs" />
     <Compile Include="DatabaseTest.cs" />
     <Compile Include="Extensions\JsonExtension.cs" />
+    <Compile Include="GenerateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

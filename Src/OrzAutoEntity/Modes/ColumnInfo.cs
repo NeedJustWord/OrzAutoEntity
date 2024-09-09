@@ -15,19 +15,19 @@ namespace OrzAutoEntity.Modes
         public string Name { get; set; }
 
         /// <summary>
-        /// 是否是视图
+        /// 驼峰格式的列名
         /// </summary>
-        public bool IsView { get; set; }
+        public string CamelName => Name.GetCamelCaseName();
+
+        /// <summary>
+        /// 小写格式的列名
+        /// </summary>
+        public string LowerName => Name.ToLower();
 
         /// <summary>
         /// 注释
         /// </summary>
         public string Comment { get; set; }
-
-        /// <summary>
-        /// 驼峰格式的列名
-        /// </summary>
-        public string CamelName => Name.GetCamelCaseName();
 
         /// <summary>
         /// 数据库类型
@@ -40,9 +40,15 @@ namespace OrzAutoEntity.Modes
         public string ClrType { get; set; }
 
         /// <summary>
-        /// 模板类型
+        /// 表字段类型
         /// </summary>
-        public string Type => AllowNull && ClrType != "string" && ClrType != "byte[]" ? $"{ClrType}?" : ClrType;
+        public string TypeInTable => AllowNull && NeedNullable(ClrType) ? $"{ClrType}?" : ClrType;
+
+        /// <summary>
+        /// 视图字段类型
+        /// <para>有些数据库版本里视图的AllowNull不准(例如达梦1-2-38-21.07.15-143663-10018-ENT  Pack2)</para>
+        /// </summary>
+        public string TypeInView => NeedNullable(ClrType) ? $"{ClrType}?" : ClrType;
 
         /// <summary>
         /// 长度，数字时表示精度
@@ -68,5 +74,10 @@ namespace OrzAutoEntity.Modes
         /// 是否自增
         /// </summary>
         public bool Identity { get; set; }
+
+        private static bool NeedNullable(string clrType)
+        {
+            return clrType != "string" && clrType != "byte[]";
+        }
     }
 }
