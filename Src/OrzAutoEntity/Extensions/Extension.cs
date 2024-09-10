@@ -1,9 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
+using OrzAutoEntity.Modes;
 
 namespace System
 {
+    public static class PublicExtension
+    {
+        /// <summary>
+        /// 过滤数据
+        /// </summary>
+        /// <param name="tableInfos"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public static List<TableInfo> Filter(this List<TableInfo> tableInfos, FilterConfig filter)
+        {
+            return filter.Count == 0 ? tableInfos : tableInfos.Where(t =>
+            {
+                if (filter.EqualsFilter.Any(x => t.Name.Equals(x))) return false;
+                if (filter.StartsWithFilter.Any(x => t.Name.StartsWith(x))) return false;
+                if (filter.EndsWithFilter.Any(x => t.Name.EndsWith(x))) return false;
+                if (filter.ContainsFilter.Any(x => t.Name.Contains(x))) return false;
+                return true;
+            }).ToList();
+        }
+    }
+
     static class Extension
     {
         /// <summary>

@@ -56,6 +56,7 @@
     <Compile Include="Helpers\TypeMapping.cs" />
     <Compile Include="Modes\ColumnInfo.cs" />
     <Compile Include="Modes\DatabaseConfig.cs" />
+    <Compile Include="Modes\FilterConfig.cs" />
     <Compile Include="Modes\TableInfo.cs" />
     <Compile Include="Modes\TemplateConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

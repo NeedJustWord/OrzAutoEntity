@@ -25,6 +25,7 @@ namespace UnitTest
         private void TestGetTableInfos(Database db)
         {
             var infos = db.GetTableInfos();
+            WriteJson($"数量：{infos.Count}");
             WriteJson(infos);
         }
         #endregion

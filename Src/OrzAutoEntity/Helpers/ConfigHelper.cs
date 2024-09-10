@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using OrzAutoEntity.Modes;
 
@@ -9,6 +10,7 @@ namespace OrzAutoEntity.Helpers
     {
         public static List<TemplateConfig> Templates { get; private set; }
         public static List<DatabaseConfig> Databases { get; private set; }
+        public static List<FilterConfig> Filters { get; private set; }
 
         /// <summary>
         /// 初始化配置
@@ -21,6 +23,7 @@ namespace OrzAutoEntity.Helpers
             TypeMapping.Reload(doc);
             Templates = TemplateConfig.Reload(doc);
             Databases = DatabaseConfig.Reload(doc);
+            Filters = FilterConfig.Reload(doc);
         }
 
         /// <summary>
@@ -31,6 +34,21 @@ namespace OrzAutoEntity.Helpers
         public static bool HasConfigFile(string configPath)
         {
             return File.Exists(GetConfigFullPath(configPath));
+        }
+
+        public static DatabaseConfig GetDatabaseConfig(string dbName)
+        {
+            return Databases.First(t => t.Name == dbName);
+        }
+
+        public static TemplateConfig GetTemplateConfig(string templateId)
+        {
+            return Templates.First(t => t.Id == templateId);
+        }
+
+        public static FilterConfig GetFilterConfig(string filterId)
+        {
+            return Filters.FirstOrDefault(t => t.Id == filterId) ?? FilterConfig.Default;
         }
 
         private static string GetConfigFullPath(string configPath)

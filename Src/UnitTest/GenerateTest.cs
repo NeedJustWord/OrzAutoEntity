@@ -38,12 +38,13 @@ namespace UnitTest
 
         private void TestGenerate(DatabaseType type, params string[] tableNames)
         {
-            var dbType = type.ToString();
-            var dbConfig = ConfigHelper.Databases.First(t => t.Type == dbType);
-            var templateConfig = ConfigHelper.Templates.First(t => t.Id == dbConfig.TemplateId);
+            var dbName = type.ToString();
+            var dbConfig = ConfigHelper.GetDatabaseConfig(dbName);
+            var templateConfig = ConfigHelper.GetTemplateConfig(dbConfig.TemplateId);
+            var filterConfig = ConfigHelper.GetFilterConfig(dbConfig.FilterId);
 
             var db = DatabaseFactory.GetDatabase(dbConfig.ConnString, type);
-            var tables = db.GetTableInfos();
+            var tables = db.GetTableInfos().Filter(filterConfig);
             if (tableNames.Length > 0)
             {
                 tables = tables.Where(t => tableNames.Contains(t.Name, StringComparer.OrdinalIgnoreCase)).ToList();
@@ -54,6 +55,10 @@ namespace UnitTest
             var path = "";
             var dir = Path.Combine(path, dbConfig.Directory);
             DirectoryHelper.CreateDirectory(dir);
+            foreach (var file in Directory.GetFiles(dir))
+            {
+                File.Delete(file);
+            }
 
             foreach (var table in tables)
             {

@@ -18,6 +18,10 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string TemplateId { get; set; }
         /// <summary>
+        /// 对应过滤器id
+        /// </summary>
+        public string FilterId { get; set; }
+        /// <summary>
         /// 生成目录
         /// </summary>
         public string Directory { get; set; }
@@ -42,6 +46,7 @@ namespace OrzAutoEntity.Modes
                     Name = node.GetAttribute("name"),
                     Type = node.GetAttribute("type"),
                     TemplateId = node.GetAttribute("templateId"),
+                    FilterId = node.GetAttribute("filterId"),
                     Directory = node.GetAttribute("directory"),
                     ConnString = node.GetAttribute("connString"),
                 });

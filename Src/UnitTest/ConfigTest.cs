@@ -12,6 +12,7 @@ namespace UnitTest
         {
             Console.WriteLine(ConfigHelper.Templates.ToJson());
             Console.WriteLine(ConfigHelper.Databases.ToJson());
+            Console.WriteLine(ConfigHelper.Filters.ToJson());
             Console.WriteLine(TypeMapping.Mapping.ToJson());
         }
     }
