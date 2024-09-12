@@ -61,7 +61,7 @@ namespace OrzAutoEntity.DataAccess
                 {
                     if (TypeMapping.IsNumber(DatabaseType, t.DbType))
                     {
-                        t.DbType = $"{t.DbType}({t.Length},{t.Scale})";
+                        t.DbType = $"{t.DbType}({t.Precision},{t.Scale})";
                     }
                     t.ClrType = TypeMapping.GetClrType(DatabaseType, t.DbType);
                 });
@@ -154,12 +154,8 @@ select t.table_name,
        t.column_name,
        c.comments,
        t.data_type,
-       case
-         when t.data_type = 'NUMBER' then
-          t.data_precision
-         else
-          t.data_length
-       end as data_length,
+       t.data_length,
+       t.data_precision,
        t.data_scale,
        t.nullable,
        t.identity_column,
@@ -190,6 +186,7 @@ select t.table_name,
                     Comment = reader["comments"].AsString(),
                     DbType = reader["data_type"].AsString(),
                     Length = reader["data_length"].AsInt(),
+                    Precision = reader["data_precision"].AsInt(),
                     Scale = reader["data_scale"].AsInt(),
                     AllowNull = reader["nullable"].AsBool(),
                     IsKey = reader["is_key"].AsBool(),
@@ -255,12 +252,8 @@ select t.table_name,
        t.column_name,
        c.comments,
        t.data_type,
-       case
-         when t.data_type = 'NUMBER' then
-          t.data_precision
-         else
-          t.data_length
-       end as data_length,
+       t.data_length,
+       t.data_precision,
        t.data_scale,
        t.nullable,
        case
@@ -303,6 +296,7 @@ select t.table_name,
                     Comment = reader["comments"].AsString(),
                     DbType = reader["data_type"].AsString(),
                     Length = reader["data_length"].AsInt(),
+                    Precision = reader["data_precision"].AsInt(),
                     Scale = reader["data_scale"].AsInt(),
                     AllowNull = reader["nullable"].AsBool(),
                     IsKey = reader["is_key"].AsBool(),

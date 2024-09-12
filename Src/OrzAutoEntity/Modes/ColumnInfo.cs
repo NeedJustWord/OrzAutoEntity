@@ -51,12 +51,17 @@ namespace OrzAutoEntity.Modes
         public string TypeInView => NeedNullable(ClrType) ? $"{ClrType}?" : ClrType;
 
         /// <summary>
-        /// 长度，数字时表示精度
+        /// 长度
         /// </summary>
         public int Length { get; set; }
 
         /// <summary>
-        /// 小数位长度，针对数字有效
+        /// 数字精度
+        /// </summary>
+        public int Precision { get; set; }
+
+        /// <summary>
+        /// 数字标度
         /// </summary>
         public int Scale { get; set; }
 
