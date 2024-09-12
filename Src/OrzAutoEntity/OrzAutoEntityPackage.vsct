@@ -54,7 +54,7 @@
           If you do not want an image next to your command, remove the Icon node /> -->
       <Button guid="guidOrzAutoEntityPackageCmdSet" id="AutoEntityCmdId" priority="0x0100" type="Button">
         <Parent guid="guidOrzAutoEntityPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="guidImages" id="Batch" />
         <Strings>
           <ButtonText>实体类生成工具</ButtonText>
         </Strings>
@@ -68,7 +68,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\AutoEntityCmd.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="guidImages" href="Resources\Images.png" usedList="Refresh, Batch, Save, Config, Warning, Link, Edit, Add, Delete"/>
     </Bitmaps>
   </Commands>
 
@@ -83,12 +83,15 @@
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{a844f622-3c59-46b9-b1e3-2b431d0603da}" >
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
+      <IDSymbol name="Refresh" value="1" />
+      <IDSymbol name="Batch" value="2" />
+      <IDSymbol name="Save" value="3" />
+      <IDSymbol name="Config" value="4" />
+      <IDSymbol name="Warning" value="5" />
+      <IDSymbol name="Link" value="6" />
+      <IDSymbol name="Edit" value="7" />
+      <IDSymbol name="Add" value="8" />
+      <IDSymbol name="Delete" value="9" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
