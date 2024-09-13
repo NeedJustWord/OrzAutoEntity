@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using OrzAutoEntity.Helpers;
+using OrzAutoEntity.Views;
 using Task = System.Threading.Tasks.Task;
 
 namespace OrzAutoEntity
@@ -89,17 +87,9 @@ namespace OrzAutoEntity
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "AutoEntityCmd";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            ConfigHelper.Init(DTEHelper.GetSelectedProjectFullPath());
+            var form = new FrmBatch();
+            form.ShowDialog();
         }
     }
 }
