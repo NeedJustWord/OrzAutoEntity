@@ -23,6 +23,7 @@ namespace OrzAutoEntity.Helpers
 
         public static void Reload(XmlDocument doc)
         {
+            Mapping.Clear();
             var nodes = doc.SelectNodes("AutoEntity/TypeMapping/Mapping");
             foreach (XmlElement node in nodes)
             {

@@ -27,6 +27,8 @@ namespace OrzAutoEntity
         /// </summary>
         private readonly AsyncPackage package;
 
+        private readonly FrmBatch frmBatch;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AutoEntityCmd"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -41,6 +43,8 @@ namespace OrzAutoEntity
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            frmBatch = new FrmBatch();
         }
 
         /// <summary>
@@ -88,8 +92,8 @@ namespace OrzAutoEntity
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             ConfigHelper.Init(DTEHelper.GetSelectedProjectFullPath());
-            var form = new FrmBatch();
-            form.ShowDialog();
+            frmBatch.Reset();
+            frmBatch.ShowDialog();
         }
     }
 }

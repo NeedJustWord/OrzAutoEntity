@@ -38,12 +38,12 @@ namespace OrzAutoEntity.Helpers
 
         public static DatabaseConfig GetDatabaseConfig(string dbName)
         {
-            return Databases.First(t => t.Name == dbName);
+            return Databases.FirstOrDefault(t => t.Name == dbName);
         }
 
         public static TemplateConfig GetTemplateConfig(string templateId)
         {
-            return Templates.First(t => t.Id == templateId);
+            return Templates.FirstOrDefault(t => t.Id == templateId);
         }
 
         public static FilterConfig GetFilterConfig(string filterId)

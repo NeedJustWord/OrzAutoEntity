@@ -296,7 +296,8 @@ namespace OrzAutoEntity.Views
             // lbConnString
             // 
             this.lbConnString.Name = "lbConnString";
-            this.lbConnString.Size = new System.Drawing.Size(0, 17);
+            this.lbConnString.Size = new System.Drawing.Size(861, 17);
+            this.lbConnString.Spring = true;
             // 
             // btnRefresh
             // 
@@ -342,6 +343,7 @@ namespace OrzAutoEntity.Views
             // 
             // FrmBatch
             // 
+            this.AcceptButton = this.btnRefresh;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;

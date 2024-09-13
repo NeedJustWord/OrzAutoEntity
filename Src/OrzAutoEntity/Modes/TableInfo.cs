@@ -6,6 +6,16 @@ namespace OrzAutoEntity.Modes
     public class TableInfo
     {
         /// <summary>
+        /// 文件全路径
+        /// </summary>
+        public string FileFullPath { get; set; }
+
+        /// <summary>
+        /// 文件名
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
         /// 表名/视图名
         /// </summary>
         public string Name { get; set; }

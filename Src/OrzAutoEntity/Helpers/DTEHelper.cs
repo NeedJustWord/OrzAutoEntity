@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
@@ -43,8 +44,94 @@ namespace OrzAutoEntity.Helpers
         /// <returns></returns>
         public static string GetSelectedProjectFullPath()
         {
-            var project = GetSelectedProject();
+            return GetProjectFullPath(GetSelectedProject());
+        }
+
+        /// <summary>
+        /// 获取项目的全路径
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public static string GetProjectFullPath(Project project)
+        {
             return project == null ? string.Empty : project.Properties.Item("FullPath").Value.ToString();
+        }
+
+        /// <summary>
+        /// 获取指定目录下的实体类
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <returns></returns>
+        public static List<string> GetExistsEntities(string directory)
+        {
+            var result = new List<string>();
+            var project = GetSelectedProject();
+            if (project == null) return result;
+
+            var items = project.ProjectItems;
+            if (!string.IsNullOrEmpty(directory))
+            {
+                var notFind = true;
+                foreach (ProjectItem item in items)
+                {
+                    if (item.Name.Equals(directory, StringComparison.OrdinalIgnoreCase))
+                    {
+                        items = item.ProjectItems;
+                        notFind = false;
+                        break;
+                    }
+                }
+                if (notFind) return result;
+            }
+
+            foreach (ProjectItem item in items)
+            {
+                if (item.Name.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(item.Name.Substring(0, item.Name.Length - ".cs".Length));
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 移除指定目录下的文件
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="fileNames"></param>
+        public static void RemoveFiles(string directory, List<string> fileNames)
+        {
+            var project = GetSelectedProject();
+            if (project == null) return;
+
+            var items = project.ProjectItems;
+            if (!string.IsNullOrEmpty(directory))
+            {
+                var notFind = true;
+                foreach (ProjectItem item in items)
+                {
+                    if (item.Name.Equals(directory, StringComparison.OrdinalIgnoreCase))
+                    {
+                        items = item.ProjectItems;
+                        notFind = false;
+                        break;
+                    }
+                }
+                if (notFind) return;
+            }
+
+            foreach (var fileName in fileNames)
+            {
+                var fileNameWithExt = $"{fileName}.cs";
+                foreach (ProjectItem item in items)
+                {
+                    if (item.Name.Equals(fileNameWithExt, StringComparison.OrdinalIgnoreCase))
+                    {
+                        item.Remove();
+                    }
+                }
+            }
         }
     }
 }
