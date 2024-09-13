@@ -8,6 +8,7 @@ namespace OrzAutoEntity.Helpers
 {
     public static class ConfigHelper
     {
+        public const string ConfigFileName = "__entity.xml";
         public static List<TemplateConfig> Templates { get; private set; }
         public static List<DatabaseConfig> Databases { get; private set; }
         public static List<FilterConfig> Filters { get; private set; }
@@ -53,7 +54,7 @@ namespace OrzAutoEntity.Helpers
 
         private static string GetConfigFullPath(string configPath)
         {
-            return Path.Combine(configPath, "__entity.xml");
+            return Path.Combine(configPath, ConfigFileName);
         }
     }
 }

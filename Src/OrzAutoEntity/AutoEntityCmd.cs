@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using OrzAutoEntity.Helpers;
 using OrzAutoEntity.Views;
@@ -41,10 +42,19 @@ namespace OrzAutoEntity
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new OleMenuCommand(this.Execute, menuCommandID);
+            menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
             commandService.AddCommand(menuItem);
 
             frmBatch = new FrmBatch();
+        }
+
+        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            if (sender is OleMenuCommand cmd)
+            {
+                cmd.Visible = ConfigHelper.HasConfigFile(DTEHelper.GetSelectedProjectFullPath());
+            }
         }
 
         /// <summary>
@@ -90,8 +100,15 @@ namespace OrzAutoEntity
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            ConfigHelper.Init(DTEHelper.GetSelectedProjectFullPath());
+            var configPath = DTEHelper.GetSelectedProjectFullPath();
+            //刚打开解决方案时扩展还没加载，命令都是可见，此时点击命令也会执行到这，所以此处需要判断配置文件是否存在
+            if (ConfigHelper.HasConfigFile(configPath) == false)
+            {
+                MessageBox.Show($"{configPath}{ConfigHelper.ConfigFileName}配置文件不存在", "错误提示");
+                return;
+            }
+
+            ConfigHelper.Init(configPath);
             frmBatch.Reset();
             frmBatch.ShowDialog();
         }

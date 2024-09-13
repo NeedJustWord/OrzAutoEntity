@@ -55,6 +55,7 @@
       <Button guid="guidOrzAutoEntityPackageCmdSet" id="AutoEntityCmdId" priority="0x0100" type="Button">
         <Parent guid="guidOrzAutoEntityPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="Batch" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <ButtonText>实体类生成工具</ButtonText>
         </Strings>
