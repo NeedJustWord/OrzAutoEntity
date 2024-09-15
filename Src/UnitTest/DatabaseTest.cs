@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OrzAutoEntity.DataAccess;
+using OrzAutoEntity.Helpers;
 
 namespace UnitTest
 {
@@ -13,13 +14,19 @@ namespace UnitTest
         [TestMethod]
         public void TestOracleGetTableInfos()
         {
-            TestGetTableInfos(GetOracleDatabase());
+            TestGetTableInfos(GetDatabase(DatabaseType.Oracle));
         }
 
         [TestMethod]
         public void TestDmGetTableInfos()
         {
-            TestGetTableInfos(GetDmDatabase());
+            TestGetTableInfos(GetDatabase(DatabaseType.Dm));
+        }
+
+        [TestMethod]
+        public void TestGbaseGetTableInfos()
+        {
+            TestGetTableInfos(GetDatabase(DatabaseType.Gbase));
         }
 
         private void TestGetTableInfos(Database db)
@@ -34,13 +41,19 @@ namespace UnitTest
         [TestMethod]
         public void TestOracleGetColumnInfos()
         {
-            TestGetColumnInfos(GetOracleDatabase());
+            TestGetColumnInfos(GetDatabase(DatabaseType.Oracle));
         }
 
         [TestMethod]
         public void TestDmGetColumnInfos()
         {
-            TestGetColumnInfos(GetDmDatabase());
+            TestGetColumnInfos(GetDatabase(DatabaseType.Dm));
+        }
+
+        [TestMethod]
+        public void TestGbaseGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Gbase));
         }
 
         private void TestGetColumnInfos(Database db, params string[] tableNames)
@@ -60,13 +73,19 @@ namespace UnitTest
         [TestMethod]
         public void TestOracleGetColumnInfosSpeed()
         {
-            TestGetColumnInfosSpeed(GetOracleDatabase());
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Oracle));
         }
 
         [TestMethod]
         public void TestDmGetColumnInfosSpeed()
         {
-            TestGetColumnInfosSpeed(GetDmDatabase());
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Dm));
+        }
+
+        [TestMethod]
+        public void TestGbaseGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Gbase));
         }
 
         private void TestGetColumnInfosSpeed(Database db)
@@ -102,14 +121,10 @@ namespace UnitTest
             Console.WriteLine($"{name}，耗时:{sw.ElapsedMilliseconds}ms");
         }
 
-        private Database GetOracleDatabase()
+        private Database GetDatabase(DatabaseType type)
         {
-            return DatabaseFactory.GetDatabase(Config.OracleConn, DatabaseType.Oracle);
-        }
-
-        private Database GetDmDatabase()
-        {
-            return DatabaseFactory.GetDatabase(Config.DmConn, DatabaseType.Dm);
+            var config = ConfigHelper.GetDatabaseConfig(type.ToString());
+            return DatabaseFactory.GetDatabase(config.ConnString, type);
         }
     }
 }

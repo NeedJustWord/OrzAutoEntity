@@ -25,6 +25,12 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void TestGbaseGenerate()
+        {
+            TestGenerate(DatabaseType.Gbase, "PRMVERSION");
+        }
+
+        [TestMethod]
         public void TestOracleGenerateAll()
         {
             TestGenerate(DatabaseType.Oracle);
@@ -36,10 +42,16 @@ namespace UnitTest
             TestGenerate(DatabaseType.Dm);
         }
 
+        [TestMethod]
+        public void TestGbaseGenerateAll()
+        {
+            TestGenerate(DatabaseType.Gbase);
+        }
+
         private void TestGenerate(DatabaseType type, params string[] tableNames)
         {
-            var dbName = type.ToString();
-            var dbConfig = ConfigHelper.GetDatabaseConfig(dbName);
+            var dbType = type.ToString();
+            var dbConfig = ConfigHelper.GetDatabaseConfig(dbType);
             var templateConfig = ConfigHelper.GetTemplateConfig(dbConfig.TemplateId);
             var filterConfig = ConfigHelper.GetFilterConfig(dbConfig.FilterId);
 

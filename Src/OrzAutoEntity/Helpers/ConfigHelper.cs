@@ -37,9 +37,9 @@ namespace OrzAutoEntity.Helpers
             return File.Exists(GetConfigFullPath(configPath));
         }
 
-        public static DatabaseConfig GetDatabaseConfig(string dbName)
+        public static DatabaseConfig GetDatabaseConfig(string dbType)
         {
-            return Databases.FirstOrDefault(t => t.Name == dbName);
+            return Databases.FirstOrDefault(t => t.Type == dbType);
         }
 
         public static TemplateConfig GetTemplateConfig(string templateId)

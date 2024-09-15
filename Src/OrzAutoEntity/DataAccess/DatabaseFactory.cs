@@ -12,6 +12,8 @@ namespace OrzAutoEntity.DataAccess
                     return new OracleDatabase(connStr);
                 case DatabaseType.Dm:
                     return new DmDatabase(connStr);
+                case DatabaseType.Gbase:
+                    return new GbaseDatabase(connStr);
                 default:
                     throw new Exception("不支持的数据库类型");
             }
