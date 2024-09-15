@@ -82,7 +82,24 @@ namespace OrzAutoEntity.DataAccess
             return tableInfos;
         }
 
-        protected void ExecuteReader(string sql, object param, Action<IDataReader> action)
+        protected ColumnInfo GetColumnInfo(IDataReader reader)
+        {
+            return new ColumnInfo
+            {
+                TableName = reader["table_name"].AsString(),
+                Name = reader["column_name"].AsString(),
+                Comment = reader["comments"].AsString(),
+                DbType = reader["data_type"].AsString(),
+                Length = reader["data_length"].AsInt(),
+                Precision = reader["data_precision"].AsInt(),
+                Scale = reader["data_scale"].AsInt(),
+                AllowNull = reader["nullable"].AsBool(),
+                IsKey = reader["is_key"].AsBool(),
+                Identity = reader["identity_column"].AsBool(),
+            };
+        }
+
+        protected IEnumerable<T> ExecuteReader<T>(string sql, object param, Func<IDataReader, T> action)
         {
             using (var conn = OpenConnection())
             {
@@ -92,7 +109,7 @@ namespace OrzAutoEntity.DataAccess
                     {
                         while (reader.Read())
                         {
-                            action(reader);
+                            yield return action(reader);
                         }
                     }
                 }
@@ -130,17 +147,16 @@ namespace OrzAutoEntity.DataAccess
 
         public override List<TableInfo> GetTableInfos()
         {
-            var result = new List<TableInfo>();
             var sql = @"select t.table_name,t.table_type,t.comments from user_tab_comments t order by t.table_name";
-            ExecuteReader(sql, null, reader =>
+            var result = ExecuteReader(sql, null, reader =>
             {
-                result.Add(new TableInfo
+                return new TableInfo
                 {
                     Name = reader["TABLE_NAME"].AsString(),
                     IsView = reader["TABLE_TYPE"].AsString() == "VIEW",
                     Comment = reader["COMMENTS"].AsString(),
-                });
-            });
+                };
+            }).ToList();
             return result;
         }
 
@@ -161,7 +177,6 @@ namespace OrzAutoEntity.DataAccess
                 where2 = "";
             }
 
-            var columns = new List<ColumnInfo>();
             var sql = $@"
 select t.table_name,
        t.column_name,
@@ -190,22 +205,7 @@ select t.table_name,
    and t.column_name = k.column_name
 {where1}
  order by t.table_name, t.column_id";
-            ExecuteReader(sql, param, reader =>
-            {
-                columns.Add(new ColumnInfo
-                {
-                    TableName = reader["table_name"].AsString(),
-                    Name = reader["column_name"].AsString(),
-                    Comment = reader["comments"].AsString(),
-                    DbType = reader["data_type"].AsString(),
-                    Length = reader["data_length"].AsInt(),
-                    Precision = reader["data_precision"].AsInt(),
-                    Scale = reader["data_scale"].AsInt(),
-                    AllowNull = reader["nullable"].AsBool(),
-                    IsKey = reader["is_key"].AsBool(),
-                    Identity = reader["identity_column"].AsBool(),
-                });
-            });
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);
         }
@@ -226,17 +226,16 @@ select t.table_name,
 
         public override List<TableInfo> GetTableInfos()
         {
-            var result = new List<TableInfo>();
             var sql = @"select t.table_name,t.table_type,t.comments from user_tab_comments t order by t.table_name";
-            ExecuteReader(sql, null, reader =>
+            var result = ExecuteReader(sql, null, reader =>
             {
-                result.Add(new TableInfo
+                return new TableInfo
                 {
                     Name = reader["TABLE_NAME"].AsString(),
                     IsView = reader["TABLE_TYPE"].AsString() == "VIEW",
                     Comment = reader["COMMENTS"].AsString(),
-                });
-            });
+                };
+            }).ToList();
             return result;
         }
 
@@ -259,7 +258,6 @@ select t.table_name,
                 where3 = "";
             }
 
-            var columns = new List<ColumnInfo>();
             var sql = $@"
 select t.table_name,
        t.column_name,
@@ -300,22 +298,7 @@ select t.table_name,
    and t.column_name = i.column_name
 {where1}
  order by t.table_name, t.column_id";
-            ExecuteReader(sql, param, reader =>
-            {
-                columns.Add(new ColumnInfo
-                {
-                    TableName = reader["table_name"].AsString(),
-                    Name = reader["column_name"].AsString(),
-                    Comment = reader["comments"].AsString(),
-                    DbType = reader["data_type"].AsString(),
-                    Length = reader["data_length"].AsInt(),
-                    Precision = reader["data_precision"].AsInt(),
-                    Scale = reader["data_scale"].AsInt(),
-                    AllowNull = reader["nullable"].AsBool(),
-                    IsKey = reader["is_key"].AsBool(),
-                    Identity = reader["identity_column"].AsBool(),
-                });
-            });
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);
         }
@@ -336,17 +319,16 @@ select t.table_name,
 
         public override List<TableInfo> GetTableInfos()
         {
-            var result = new List<TableInfo>();
             var sql = @"SELECT t.tabname,t.tabtype,c.comments FROM systables t LEFT JOIN syscomments c ON t.tabname=c.tabname AND t.tabtype=c.tabtype WHERE t.tabtype IN ('T','V') AND t.tabid>99 ORDER BY t.tabname";
-            ExecuteReader(sql, null, reader =>
+            var result = ExecuteReader(sql, null, reader =>
             {
-                result.Add(new TableInfo
+                return new TableInfo
                 {
                     Name = reader["tabname"].AsString(),
                     IsView = reader["tabtype"].AsString() == "V",
                     Comment = reader["comments"].AsString(),
-                });
-            });
+                };
+            }).ToList();
             return result;
         }
 
@@ -365,7 +347,6 @@ select t.table_name,
                 where = "";
             }
 
-            var columns = new List<ColumnInfo>();
             var sql = $@"
 SELECT t.tabname AS table_name,
        c.colname AS column_name,
@@ -444,22 +425,7 @@ SELECT t.tabname AS table_name,
    AND t.tabid > 99
 {where}
  ORDER BY t.tabname, c.colno";
-            ExecuteReader(sql, param, reader =>
-            {
-                columns.Add(new ColumnInfo
-                {
-                    TableName = reader["table_name"].AsString(),
-                    Name = reader["column_name"].AsString(),
-                    Comment = reader["comments"].AsString(),
-                    DbType = reader["data_type"].AsString(),
-                    Length = reader["data_length"].AsInt(),
-                    Precision = reader["data_precision"].AsInt(),
-                    Scale = reader["data_scale"].AsInt(),
-                    AllowNull = reader["nullable"].AsBool(),
-                    IsKey = reader["is_key"].AsBool(),
-                    Identity = reader["identity_column"].AsBool(),
-                });
-            });
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);
         }
