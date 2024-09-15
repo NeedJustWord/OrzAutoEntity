@@ -29,6 +29,7 @@ namespace OrzAutoEntity.Views
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBatch));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbDatabase = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -353,6 +354,7 @@ namespace OrzAutoEntity.Views
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(800, 39);
             this.Name = "FrmBatch";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
