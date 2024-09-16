@@ -1,4 +1,5 @@
-﻿using OrzAutoEntity.Helpers;
+﻿using OrzAutoEntity.EncodingProviders;
+using OrzAutoEntity.Helpers;
 
 namespace UnitTest
 {
@@ -6,6 +7,7 @@ namespace UnitTest
     {
         public BaseTest()
         {
+            Cp936EncodingProvider.RegisterProvider();
             ConfigHelper.Init("");
         }
     }

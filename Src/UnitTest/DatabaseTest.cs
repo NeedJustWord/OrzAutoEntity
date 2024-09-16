@@ -10,11 +10,22 @@ namespace UnitTest
     [TestClass]
     public class DatabaseTest : BaseTest
     {
-        #region TestGetTableInfos
         [TestMethod]
         public void TestOracleGetTableInfos()
         {
             TestGetTableInfos(GetDatabase(DatabaseType.Oracle));
+        }
+
+        [TestMethod]
+        public void TestOracleGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Oracle));
+        }
+
+        [TestMethod]
+        public void TestOracleGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Oracle));
         }
 
         [TestMethod]
@@ -24,9 +35,51 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void TestDmGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Dm));
+        }
+
+        [TestMethod]
+        public void TestDmGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Dm));
+        }
+
+        [TestMethod]
         public void TestGbaseGetTableInfos()
         {
             TestGetTableInfos(GetDatabase(DatabaseType.Gbase));
+        }
+
+        [TestMethod]
+        public void TestGbaseGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Gbase));
+        }
+
+        [TestMethod]
+        public void TestGbaseGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Gbase));
+        }
+
+        [TestMethod]
+        public void TestSybaseGetTableInfos()
+        {
+            TestGetTableInfos(GetDatabase(DatabaseType.Sybase));
+        }
+
+        [TestMethod]
+        public void TestSybaseGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Sybase));
+        }
+
+        [TestMethod]
+        public void TestSybaseGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Sybase));
         }
 
         private void TestGetTableInfos(Database db)
@@ -34,26 +87,6 @@ namespace UnitTest
             var infos = db.GetTableInfos();
             WriteJson($"数量：{infos.Count}");
             WriteJson(infos);
-        }
-        #endregion
-
-        #region TestGetColumnInfos
-        [TestMethod]
-        public void TestOracleGetColumnInfos()
-        {
-            TestGetColumnInfos(GetDatabase(DatabaseType.Oracle));
-        }
-
-        [TestMethod]
-        public void TestDmGetColumnInfos()
-        {
-            TestGetColumnInfos(GetDatabase(DatabaseType.Dm));
-        }
-
-        [TestMethod]
-        public void TestGbaseGetColumnInfos()
-        {
-            TestGetColumnInfos(GetDatabase(DatabaseType.Gbase));
         }
 
         private void TestGetColumnInfos(Database db, params string[] tableNames)
@@ -66,26 +99,6 @@ namespace UnitTest
 
             tableInfos = db.FillColumnInfos(tableInfos);
             WriteJson(tableInfos);
-        }
-        #endregion
-
-        #region TestGetColumnInfosSpeed
-        [TestMethod]
-        public void TestOracleGetColumnInfosSpeed()
-        {
-            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Oracle));
-        }
-
-        [TestMethod]
-        public void TestDmGetColumnInfosSpeed()
-        {
-            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Dm));
-        }
-
-        [TestMethod]
-        public void TestGbaseGetColumnInfosSpeed()
-        {
-            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Gbase));
         }
 
         private void TestGetColumnInfosSpeed(Database db)
@@ -106,7 +119,6 @@ namespace UnitTest
                 db.FillColumnInfos(null);
             });
         }
-        #endregion
 
         private void WriteJson(object obj)
         {

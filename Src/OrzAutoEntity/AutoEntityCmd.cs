@@ -2,6 +2,7 @@
 using System.ComponentModel.Design;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
+using OrzAutoEntity.EncodingProviders;
 using OrzAutoEntity.Helpers;
 using OrzAutoEntity.Views;
 using Task = System.Threading.Tasks.Task;
@@ -46,6 +47,7 @@ namespace OrzAutoEntity
             menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
             commandService.AddCommand(menuItem);
 
+            Cp936EncodingProvider.RegisterProvider();
             frmBatch = new FrmBatch();
         }
 

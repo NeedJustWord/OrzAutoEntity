@@ -19,21 +19,15 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestDmGenerate()
-        {
-            TestGenerate(DatabaseType.Dm, "PRM_VERSION");
-        }
-
-        [TestMethod]
-        public void TestGbaseGenerate()
-        {
-            TestGenerate(DatabaseType.Gbase, "PRMVERSION");
-        }
-
-        [TestMethod]
         public void TestOracleGenerateAll()
         {
             TestGenerate(DatabaseType.Oracle);
+        }
+
+        [TestMethod]
+        public void TestDmGenerate()
+        {
+            TestGenerate(DatabaseType.Dm, "PRM_VERSION");
         }
 
         [TestMethod]
@@ -43,9 +37,27 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void TestGbaseGenerate()
+        {
+            TestGenerate(DatabaseType.Gbase, "PRMVERSION");
+        }
+
+        [TestMethod]
         public void TestGbaseGenerateAll()
         {
             TestGenerate(DatabaseType.Gbase);
+        }
+
+        [TestMethod]
+        public void TestSybaseGenerate()
+        {
+            TestGenerate(DatabaseType.Sybase, "PRMVERSION");
+        }
+
+        [TestMethod]
+        public void TestSybaseGenerateAll()
+        {
+            TestGenerate(DatabaseType.Sybase);
         }
 
         private void TestGenerate(DatabaseType type, params string[] tableNames)
@@ -78,6 +90,9 @@ namespace UnitTest
                 var content = GenerateService.GetEntityContent(templateConfig.Content, table);
                 GenerateService.SaveFile(file, content);
             }
+
+            Console.WriteLine($"数量：{tables.Count}");
+            Console.WriteLine(tables.ToJson());
         }
         #endregion
     }

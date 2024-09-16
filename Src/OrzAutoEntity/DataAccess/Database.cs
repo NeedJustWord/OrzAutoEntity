@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Odbc;
 using System.Linq;
 using System.Text;
+using AdoNetCore.AseClient;
 using Dm;
 using Oracle.ManagedDataAccess.Client;
 using OrzAutoEntity.Helpers;
@@ -319,6 +320,7 @@ select t.table_name,
 
         public override List<TableInfo> GetTableInfos()
         {
+            //系统表t.tabid<=99，用户表t.tabid>99
             var sql = @"SELECT t.tabname,t.tabtype,c.comments FROM systables t LEFT JOIN syscomments c ON t.tabname=c.tabname AND t.tabtype=c.tabtype WHERE t.tabtype IN ('T','V') AND t.tabid>99 ORDER BY t.tabname";
             var result = ExecuteReader(sql, null, reader =>
             {
@@ -425,6 +427,152 @@ SELECT t.tabname AS table_name,
    AND t.tabid > 99
 {where}
  ORDER BY t.tabname, c.colno";
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
+
+            return Handle(tableInfos, columns);
+        }
+    }
+
+    class SybaseDatabase : Database
+    {
+        protected override DatabaseType DatabaseType => DatabaseType.Sybase;
+
+        public SybaseDatabase(string connStr) : base(connStr)
+        {
+        }
+
+        protected override IDbConnection GetConnection()
+        {
+            return new AseConnection(connStr);
+        }
+
+        public override List<TableInfo> GetTableInfos()
+        {
+            var sql = @"SELECT t.name,t.type,'' as comment FROM sysobjects t WHERE t.type IN ('U','V') ORDER BY t.name";
+            var result = ExecuteReader(sql, null, reader =>
+            {
+                return new TableInfo
+                {
+                    Name = reader["name"].AsString(),
+                    IsView = reader["type"].AsString().Trim() == "V",
+                    Comment = reader["comment"].AsString(),
+                };
+            }).ToList();
+            return result;
+        }
+
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
+        {
+            Dictionary<string, object> param;
+            string where;
+            if (tableInfos?.Count > 0)
+            {
+                GetParamSql(tableInfos, "@", out var paramSql, out param);
+                where = $"   AND o.name IN ({paramSql})";
+            }
+            else
+            {
+                param = null;
+                where = "";
+            }
+
+            var sql = $@"
+SELECT o.name AS table_name,
+       c.name AS column_name,
+       '' AS comments,
+       t.name data_type,
+       c.length AS data_length,
+       c.prec data_precision,
+       c.scale data_scale,
+       CASE
+         WHEN c.status &8 = 0 THEN
+          'N'
+         ELSE
+          'Y'
+       END AS nullable,
+       CASE
+         WHEN c.status &128 = 0 THEN
+          'N'
+         ELSE
+          'Y'
+       END AS identity_column,
+       CASE
+         WHEN index_col(o.name, 1, 1) = c.name OR
+              index_col(o.name, 1, 2) = c.name OR
+              index_col(o.name, 1, 3) = c.name OR
+              index_col(o.name, 1, 4) = c.name OR
+              index_col(o.name, 1, 5) = c.name OR
+              index_col(o.name, 1, 6) = c.name OR
+              index_col(o.name, 1, 7) = c.name OR
+              index_col(o.name, 1, 8) = c.name OR
+              index_col(o.name, 1, 9) = c.name OR
+              index_col(o.name, 1, 10) = c.name OR
+              index_col(o.name, 1, 11) = c.name OR
+              index_col(o.name, 1, 12) = c.name OR
+              index_col(o.name, 1, 13) = c.name OR
+              index_col(o.name, 1, 14) = c.name OR
+              index_col(o.name, 1, 15) = c.name OR
+              index_col(o.name, 1, 16) = c.name OR
+              index_col(o.name, 1, 17) = c.name OR
+              index_col(o.name, 1, 18) = c.name OR
+              index_col(o.name, 1, 19) = c.name OR
+              index_col(o.name, 1, 20) = c.name OR
+              index_col(o.name, 1, 21) = c.name OR
+              index_col(o.name, 1, 22) = c.name OR
+              index_col(o.name, 1, 23) = c.name OR
+              index_col(o.name, 1, 24) = c.name OR
+              index_col(o.name, 1, 25) = c.name OR
+              index_col(o.name, 1, 26) = c.name OR
+              index_col(o.name, 1, 27) = c.name OR
+              index_col(o.name, 1, 28) = c.name OR
+              index_col(o.name, 1, 29) = c.name OR
+              index_col(o.name, 1, 30) = c.name OR
+              index_col(o.name, 1, 31) = c.name OR
+              index_col(o.name, 1, 32) = c.name OR
+              index_col(o.name, 1, 33) = c.name OR
+              index_col(o.name, 1, 34) = c.name OR
+              index_col(o.name, 1, 35) = c.name OR
+              index_col(o.name, 1, 36) = c.name OR
+              index_col(o.name, 1, 37) = c.name OR
+              index_col(o.name, 1, 38) = c.name OR
+              index_col(o.name, 1, 39) = c.name OR
+              index_col(o.name, 1, 40) = c.name OR
+              index_col(o.name, 1, 41) = c.name OR
+              index_col(o.name, 1, 42) = c.name OR
+              index_col(o.name, 1, 43) = c.name OR
+              index_col(o.name, 1, 44) = c.name OR
+              index_col(o.name, 1, 45) = c.name OR
+              index_col(o.name, 1, 46) = c.name OR
+              index_col(o.name, 1, 47) = c.name OR
+              index_col(o.name, 1, 48) = c.name OR
+              index_col(o.name, 1, 49) = c.name OR
+              index_col(o.name, 1, 50) = c.name OR
+              index_col(o.name, 1, 51) = c.name OR
+              index_col(o.name, 1, 52) = c.name OR
+              index_col(o.name, 1, 53) = c.name OR
+              index_col(o.name, 1, 54) = c.name OR
+              index_col(o.name, 1, 55) = c.name OR
+              index_col(o.name, 1, 56) = c.name OR
+              index_col(o.name, 1, 57) = c.name OR
+              index_col(o.name, 1, 58) = c.name OR
+              index_col(o.name, 1, 59) = c.name OR
+              index_col(o.name, 1, 60) = c.name OR
+              index_col(o.name, 1, 61) = c.name OR
+              index_col(o.name, 1, 62) = c.name OR
+              index_col(o.name, 1, 63) = c.name OR
+              index_col(o.name, 1, 64) = c.name THEN
+          'Y'
+         ELSE
+          'N'
+       END AS is_key
+  FROM syscolumns c
+  JOIN sysobjects o
+    ON c.id = o.id
+  JOIN systypes t
+    ON c.usertype = t.usertype
+ WHERE o.type IN ('U', 'V')
+{where}
+ ORDER BY o.name, c.colid";
             var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);

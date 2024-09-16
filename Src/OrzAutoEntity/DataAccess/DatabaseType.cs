@@ -5,5 +5,6 @@
         Oracle,
         Dm,
         Gbase,
+        Sybase,
     }
 }
