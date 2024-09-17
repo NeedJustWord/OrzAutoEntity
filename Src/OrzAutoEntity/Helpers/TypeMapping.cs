@@ -34,7 +34,7 @@ namespace OrzAutoEntity.Helpers
                 {
                     var clrType = item.GetAttribute("clrType").Trim();
                     var isNumber = item.GetAttribute("isNumber").Trim().AsBool();
-                    foreach (var sqlType in item.GetAttribute("sqlType").Split('|'))
+                    foreach (var sqlType in item.GetAttribute("sqlType").SplitRemoveEmptyEntries('|'))
                     {
                         dict[sqlType.Trim()] = new TypeMappingConfig(clrType, isNumber);
                     }

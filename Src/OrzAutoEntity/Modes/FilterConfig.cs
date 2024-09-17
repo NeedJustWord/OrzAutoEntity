@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace OrzAutoEntity.Modes
@@ -49,20 +50,20 @@ namespace OrzAutoEntity.Modes
                     {
                         if (filter.EndsWith("%"))
                         {
-                            config.ContainsFilter.AddRange(filter.Trim('%').Split('|'));
+                            config.ContainsFilter.AddRange(filter.Trim('%').SplitRemoveEmptyEntries('|'));
                         }
                         else
                         {
-                            config.EndsWithFilter.AddRange(filter.TrimStart('%').Split('|'));
+                            config.EndsWithFilter.AddRange(filter.TrimStart('%').SplitRemoveEmptyEntries('|'));
                         }
                     }
                     else if (filter.EndsWith("%"))
                     {
-                        config.StartsWithFilter.AddRange(filter.TrimEnd('%').Split('|'));
+                        config.StartsWithFilter.AddRange(filter.TrimEnd('%').SplitRemoveEmptyEntries('|'));
                     }
                     else
                     {
-                        config.EqualsFilter.AddRange(filter.Split('|'));
+                        config.EqualsFilter.AddRange(filter.SplitRemoveEmptyEntries('|'));
                     }
                 }
                 result.Add(config);

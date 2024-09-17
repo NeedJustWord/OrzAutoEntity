@@ -39,6 +39,11 @@ namespace System
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Replace("_", "");
         }
 
+        public static string[] SplitRemoveEmptyEntries(this string str, params char[] separator)
+        {
+            return str.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+        }
+
         #region 数据库扩展
         /// <summary>
         /// 转换成字符串
