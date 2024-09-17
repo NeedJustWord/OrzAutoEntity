@@ -114,6 +114,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Images.png" />
+    <Content Include="__entity.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\FrmBatch.resx">
