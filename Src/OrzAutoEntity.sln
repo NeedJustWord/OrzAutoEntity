@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "其他文件", "其他文件", "{DE19B7B2-13D8-4EBD-B0AB-76C76D1D9C2C}"
 	ProjectSection(SolutionItems) = preProject
+		..\__entity.xml = ..\__entity.xml
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject

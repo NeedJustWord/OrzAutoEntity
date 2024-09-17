@@ -88,7 +88,7 @@ namespace Model.Oracle
         </Template>
     </Templates>
 
-    <!--数据库表过滤配置，可以有多个Filter节点-->
+    <!--数据库表过滤配置，符合条件的表不会生成实体类，可以有多个Filter节点-->
     <Filters>
         <!--id:过滤器id-->
         <Filter id="1">
@@ -108,7 +108,7 @@ namespace Model.Oracle
         <!--name:数据库类型-->
         <Mapping name="Oracle">
             <!--sqlType:数据库里的类型名,多个用|分隔；isNumber:Y表示此类型是数字-->
-            <!--数字类型会转换成【类型名(精度/字节数,标度)】的格式参数匹配，是精度还是字节数取决于数据库类型-->
+            <!--数字类型会转换成【类型名(精度/字节数,标度)】的格式参与匹配，是精度还是字节数取决于数据库类型和字段类型-->
             <Item sqlType="NUMBER" isNumber="Y"></Item>
             <!--sqlType:转换前的类型，【类型名】或【类型名(精度/字节数,标度)】,多个用|分隔；clrType:转换后的类型-->
             <!--重复定义以最后的定义进行匹配-->
