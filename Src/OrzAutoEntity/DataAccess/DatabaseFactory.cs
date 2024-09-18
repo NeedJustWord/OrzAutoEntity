@@ -16,6 +16,8 @@ namespace OrzAutoEntity.DataAccess
                     return new GbaseDatabase(connStr);
                 case DatabaseType.Sybase:
                     return new SybaseDatabase(connStr);
+                case DatabaseType.MySql:
+                    return new MySqlDatabase(connStr);
                 default:
                     throw new Exception("不支持的数据库类型");
             }

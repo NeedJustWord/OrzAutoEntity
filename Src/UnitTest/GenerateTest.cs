@@ -60,6 +60,18 @@ namespace UnitTest
             TestGenerate(DatabaseType.Sybase);
         }
 
+        [TestMethod]
+        public void TestMySqlGenerate()
+        {
+            TestGenerate(DatabaseType.MySql, "PRMVERSION");
+        }
+
+        [TestMethod]
+        public void TestMySqlGenerateAll()
+        {
+            TestGenerate(DatabaseType.MySql);
+        }
+
         private void TestGenerate(DatabaseType type, params string[] tableNames)
         {
             var dbType = type.ToString();

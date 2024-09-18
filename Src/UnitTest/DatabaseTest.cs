@@ -82,6 +82,24 @@ namespace UnitTest
             TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Sybase));
         }
 
+        [TestMethod]
+        public void TestMySqlGetTableInfos()
+        {
+            TestGetTableInfos(GetDatabase(DatabaseType.MySql));
+        }
+
+        [TestMethod]
+        public void TestMySqlGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.MySql));
+        }
+
+        [TestMethod]
+        public void TestMySqlGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.MySql));
+        }
+
         private void TestGetTableInfos(Database db)
         {
             var infos = db.GetTableInfos();

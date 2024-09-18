@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using AdoNetCore.AseClient;
 using Dm;
+using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
 using OrzAutoEntity.Helpers;
 using OrzAutoEntity.Modes;
@@ -84,6 +85,16 @@ namespace OrzAutoEntity.DataAccess
             return tableInfos;
         }
 
+        protected TableInfo GetTableInfo(IDataReader reader)
+        {
+            return new TableInfo
+            {
+                Name = reader["table_name"].AsString(),
+                IsView = reader["table_type"].AsBool(),
+                Comment = reader["comments"].AsString(),
+            };
+        }
+
         protected ColumnInfo GetColumnInfo(IDataReader reader)
         {
             return new ColumnInfo
@@ -149,16 +160,8 @@ namespace OrzAutoEntity.DataAccess
 
         public override List<TableInfo> GetTableInfos()
         {
-            var sql = @"select t.table_name,t.table_type,t.comments from user_tab_comments t order by t.table_name";
-            var result = ExecuteReader(sql, null, reader =>
-            {
-                return new TableInfo
-                {
-                    Name = reader["TABLE_NAME"].AsString(),
-                    IsView = reader["TABLE_TYPE"].AsString() == "VIEW",
-                    Comment = reader["COMMENTS"].AsString(),
-                };
-            }).ToList();
+            var sql = @"select t.table_name,case when t.table_type='VIEW' then 'Y' else 'N' end as table_type,t.comments from user_tab_comments t order by t.table_name";
+            var result = ExecuteReader(sql, null, GetTableInfo).ToList();
             return result;
         }
 
@@ -228,16 +231,8 @@ select t.table_name,
 
         public override List<TableInfo> GetTableInfos()
         {
-            var sql = @"select t.table_name,t.table_type,t.comments from user_tab_comments t order by t.table_name";
-            var result = ExecuteReader(sql, null, reader =>
-            {
-                return new TableInfo
-                {
-                    Name = reader["TABLE_NAME"].AsString(),
-                    IsView = reader["TABLE_TYPE"].AsString() == "VIEW",
-                    Comment = reader["COMMENTS"].AsString(),
-                };
-            }).ToList();
+            var sql = @"select t.table_name,case when t.table_type='VIEW' then 'Y' else 'N' end as table_type,t.comments from user_tab_comments t order by t.table_name";
+            var result = ExecuteReader(sql, null, GetTableInfo).ToList();
             return result;
         }
 
@@ -322,16 +317,8 @@ select t.table_name,
         public override List<TableInfo> GetTableInfos()
         {
             //系统表t.tabid<=99，用户表t.tabid>99
-            var sql = @"SELECT t.tabname,t.tabtype,c.comments FROM systables t LEFT JOIN syscomments c ON t.tabname=c.tabname AND t.tabtype=c.tabtype WHERE t.tabtype IN ('T','V') AND t.tabid>99 ORDER BY t.tabname";
-            var result = ExecuteReader(sql, null, reader =>
-            {
-                return new TableInfo
-                {
-                    Name = reader["tabname"].AsString(),
-                    IsView = reader["tabtype"].AsString() == "V",
-                    Comment = reader["comments"].AsString(),
-                };
-            }).ToList();
+            var sql = @"SELECT t.tabname as table_name,case when t.tabtype='V' then 'Y' else 'N' end as table_type,c.comments FROM systables t LEFT JOIN syscomments c ON t.tabname=c.tabname AND t.tabtype=c.tabtype WHERE t.tabtype IN ('T','V') AND t.tabid>99 ORDER BY t.tabname";
+            var result = ExecuteReader(sql, null, GetTableInfo).ToList();
             return result;
         }
 
@@ -449,16 +436,8 @@ SELECT t.tabname AS table_name,
 
         public override List<TableInfo> GetTableInfos()
         {
-            var sql = @"SELECT t.name,t.type,'' as comment FROM sysobjects t WHERE t.type IN ('U','V') ORDER BY t.name";
-            var result = ExecuteReader(sql, null, reader =>
-            {
-                return new TableInfo
-                {
-                    Name = reader["name"].AsString(),
-                    IsView = reader["type"].AsString().Trim() == "V",
-                    Comment = reader["comment"].AsString(),
-                };
-            }).ToList();
+            var sql = @"SELECT t.name as table_name,case when t.type='V' then 'Y' else 'N' end as table_type,'' as comments FROM sysobjects t WHERE t.type IN ('U','V') ORDER BY t.name";
+            var result = ExecuteReader(sql, null, GetTableInfo).ToList();
             return result;
         }
 
@@ -574,6 +553,88 @@ SELECT o.name AS table_name,
  WHERE o.type IN ('U', 'V')
 {where}
  ORDER BY o.name, c.colid";
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
+
+            return Handle(tableInfos, columns);
+        }
+    }
+
+    class MySqlDatabase : Database
+    {
+        protected override DatabaseType DatabaseType => DatabaseType.MySql;
+
+        private string tableSchema;
+
+        public MySqlDatabase(string connStr) : base(connStr)
+        {
+            tableSchema = connStr.SplitRemoveEmptyEntries(';')
+                .Select(t => t.Trim())
+                .FirstOrDefault(t => t.StartsWith("Database", StringComparison.OrdinalIgnoreCase));
+            tableSchema = tableSchema.Substring(tableSchema.IndexOf('=') + 1).TrimStart();
+        }
+
+        protected override IDbConnection GetConnection()
+        {
+            return new MySqlConnection(connStr);
+        }
+
+        public override List<TableInfo> GetTableInfos()
+        {
+            var param = new Dictionary<string, object>
+            {
+                { "@Schema",tableSchema}
+            };
+            var sql = @"select t.TABLE_NAME,case when t.TABLE_TYPE='VIEW' then 'Y' else 'N' end as TABLE_TYPE,t.TABLE_COMMENT as comments from information_schema.tables t where t.TABLE_SCHEMA=@Schema and t.TABLE_TYPE in ('BASE TABLE','VIEW') order by t.TABLE_NAME";
+            var result = ExecuteReader(sql, param, GetTableInfo).ToList();
+            return result;
+        }
+
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
+        {
+            Dictionary<string, object> param;
+            string where;
+            if (tableInfos?.Count > 0)
+            {
+                GetParamSql(tableInfos, "@", out var paramSql, out param);
+                where = $"   and c.TABLE_NAME in ({paramSql})";
+            }
+            else
+            {
+                param = new Dictionary<string, object>();
+                where = "";
+            }
+            param["@Schema"] = tableSchema;
+
+            var sql = $@"
+select c.TABLE_NAME,
+       c.COLUMN_NAME,
+       c.COLUMN_COMMENT as COMMENTS,
+       case
+         when instr(c.COLUMN_TYPE, 'unsigned') = 0 then
+          c.DATA_TYPE
+         else
+          concat(c.DATA_TYPE, ' unsigned')
+       end as DATA_TYPE,
+       c.CHARACTER_MAXIMUM_LENGTH as DATA_LENGTH,
+       c.NUMERIC_PRECISION as DATA_PRECISION,
+       c.NUMERIC_SCALE as DATA_SCALE,
+       c.IS_NULLABLE as NULLABLE,
+       case
+         when instr(c.EXTRA, 'auto_increment') = 0 then
+          'N'
+         else
+          'Y'
+       end as IDENTITY_COLUMN,
+       case
+         when instr(c.COLUMN_KEY, 'PRI') = 0 then
+          'N'
+         else
+          'Y'
+       end as IS_KEY
+  from information_schema.columns c
+ where c.TABLE_SCHEMA = @Schema
+{where}
+ order by c.TABLE_NAME, c.ORDINAL_POSITION";
             var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);

@@ -93,6 +93,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.208" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.11.71" />
+    <PackageReference Include="MySql.Data">
+      <Version>6.10.9</Version>
+    </PackageReference>
     <PackageReference Include="NVelocity">
       <Version>1.2.0</Version>
     </PackageReference>

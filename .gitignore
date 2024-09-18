@@ -5,6 +5,7 @@
 *.suo
 *.user
 obj
-Debug
+bin
+TestResults
 .vs
 /Src/OrzAutoEntity/__entity.xml
