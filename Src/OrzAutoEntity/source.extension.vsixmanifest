@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="OrzAutoEntity.da27ae82-b798-4807-9810-670c957071fb" Version="1.0" Language="zh-CN" Publisher="NeedJustWord" />
         <DisplayName>OrzAutoEntity</DisplayName>
-        <Description xml:space="preserve">实体类生成工具</Description>
+        <Description xml:space="preserve">实体类生成工具，更多信息请参阅https://github.com/NeedJustWord/OrzAutoEntity</Description>
         <MoreInfo>https://github.com/NeedJustWord/OrzAutoEntity</MoreInfo>
         <Icon>Resources\Icon.png</Icon>
     </Metadata>
