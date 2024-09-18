@@ -70,6 +70,7 @@ namespace OrzAutoEntity.DataAccess
             var dict = columnInfos.GroupBy(t => t.TableName).ToDictionary(t => t.Key, t => t.ToList());
             foreach (var table in tableInfos)
             {
+                table.Comment = table.Comment.Trim();
                 table.Columns = dict[table.Name];
                 table.Columns.ForEach(t =>
                 {
@@ -89,7 +90,7 @@ namespace OrzAutoEntity.DataAccess
             {
                 TableName = reader["table_name"].AsString(),
                 Name = reader["column_name"].AsString(),
-                Comment = reader["comments"].AsString(),
+                Comment = reader["comments"].AsString().Trim(),
                 DbType = reader["data_type"].AsString(),
                 Length = reader["data_length"].AsInt(),
                 Precision = reader["data_precision"].AsInt(),
