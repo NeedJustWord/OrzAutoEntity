@@ -8,7 +8,7 @@ namespace UnitTest
         public BaseTest()
         {
             Cp936EncodingProvider.RegisterProvider();
-            ConfigHelper.Init("");
+            ConfigHelper.Init("./../../../OrzAutoEntity");
         }
     }
 }
