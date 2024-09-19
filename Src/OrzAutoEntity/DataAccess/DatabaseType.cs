@@ -7,5 +7,6 @@
         Gbase,
         Sybase,
         MySql,
+        Sqlite,
     }
 }

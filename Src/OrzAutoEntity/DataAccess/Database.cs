@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using AdoNetCore.AseClient;
 using Dm;
 using MySql.Data.MySqlClient;
@@ -71,18 +73,19 @@ namespace OrzAutoEntity.DataAccess
             var dict = columnInfos.GroupBy(t => t.TableName).ToDictionary(t => t.Key, t => t.ToList());
             foreach (var table in tableInfos)
             {
-                table.Comment = table.Comment.Trim();
                 table.Columns = dict[table.Name];
-                table.Columns.ForEach(t =>
-                {
-                    if (TypeMapping.IsNumber(DatabaseType, t.DbType))
-                    {
-                        t.DbType = $"{t.DbType}({t.Precision},{t.Scale})";
-                    }
-                    t.ClrType = TypeMapping.GetClrType(DatabaseType, t.DbType);
-                });
+                table.Columns.ForEach(ColumnTypeMapping);
             }
             return tableInfos;
+        }
+
+        protected void ColumnTypeMapping(ColumnInfo column)
+        {
+            if (TypeMapping.IsNumber(DatabaseType, column.DbType))
+            {
+                column.DbType = $"{column.DbType}({column.Precision},{column.Scale})";
+            }
+            column.ClrType = TypeMapping.GetClrType(DatabaseType, column.DbType);
         }
 
         protected TableInfo GetTableInfo(IDataReader reader)
@@ -91,7 +94,7 @@ namespace OrzAutoEntity.DataAccess
             {
                 Name = reader["table_name"].AsString(),
                 IsView = reader["table_type"].AsBool(),
-                Comment = reader["comments"].AsString(),
+                Comment = reader["comments"].AsString().Trim(),
             };
         }
 
@@ -638,6 +641,98 @@ select c.TABLE_NAME,
             var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
 
             return Handle(tableInfos, columns);
+        }
+    }
+
+    class SqliteDatabase : Database
+    {
+        protected override DatabaseType DatabaseType => DatabaseType.Sqlite;
+
+        private Regex lengthRegex = new Regex(@"\(\s*(?<length>\d+)\s*,?\s*(?<scale>\d+)?\s*\)");
+
+        public SqliteDatabase(string connStr) : base(connStr)
+        {
+        }
+
+        protected override IDbConnection GetConnection()
+        {
+            return new SQLiteConnection(connStr);
+        }
+
+        public override List<TableInfo> GetTableInfos()
+        {
+            var sql = @"SELECT t.name AS table_name,CASE WHEN t.type='view' THEN 'Y' ELSE 'N' END AS table_type,t.sql FROM sqlite_master t WHERE t.type IN ('table','view') AND t.name<>'sqlite_sequence' ORDER BY t.name";
+            var result = ExecuteReader(sql, null, reader =>
+            {
+                return new TableInfo
+                {
+                    Name = reader["table_name"].AsString(),
+                    IsView = reader["table_type"].AsBool(),
+                    Comment = "",
+                    Sql = reader["sql"].AsString().ToUpper(),
+                };
+            }).ToList();
+            return result;
+        }
+
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
+        {
+            if (tableInfos == null || tableInfos.Count == 0)
+            {
+                tableInfos = GetTableInfos();
+            }
+
+            if (tableInfos.Count == 0)
+            {
+                return tableInfos;
+            }
+
+            foreach (var table in tableInfos)
+            {
+                var sql = $"pragma table_info('{table.Name}')";
+                table.Columns = ExecuteReader(sql, null, reader =>
+                {
+                    var column = new ColumnInfo
+                    {
+                        TableName = table.Name,
+                        Name = reader["name"].AsString(),
+                        Comment = "",
+                        DbType = reader["type"].AsString(),
+                        AllowNull = reader["notnull"].AsInt() == 0,
+                        IsKey = reader["pk"].AsInt() == 1,
+                    };
+
+                    if (table.IsView == false) DecodeIdentity(column, table.Sql);
+                    DecodeDbType(column);
+                    ColumnTypeMapping(column);
+
+                    return column;
+                }).ToList();
+            }
+
+            return tableInfos;
+        }
+
+        private void DecodeIdentity(ColumnInfo column, string sql)
+        {
+            var regex = new Regex($@"\b{column.Name.ToUpper()}\b[^,]+AUTOINCREMENT");
+            column.Identity = regex.IsMatch(sql);
+        }
+
+        private void DecodeDbType(ColumnInfo column)
+        {
+            var match = lengthRegex.Match(column.DbType);
+            if (match.Success)
+            {
+                column.DbType = column.DbType.Substring(0, column.DbType.IndexOf('(')).Trim();
+                column.Length = int.Parse(match.Groups["length"].Value);
+                column.Precision = column.Length;
+                var scale = match.Groups["scale"].Value;
+                if (scale.IsNotNullAndEmpty())
+                {
+                    column.Scale = int.Parse(scale);
+                }
+            }
         }
     }
 }

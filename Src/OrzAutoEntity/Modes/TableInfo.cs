@@ -41,6 +41,11 @@ namespace OrzAutoEntity.Modes
         public string Comment { get; set; }
 
         /// <summary>
+        /// sql
+        /// </summary>
+        public string Sql { get; set; }
+
+        /// <summary>
         /// 字段信息
         /// </summary>
         public List<ColumnInfo> Columns { get; set; }

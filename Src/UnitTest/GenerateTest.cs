@@ -72,6 +72,18 @@ namespace UnitTest
             TestGenerate(DatabaseType.MySql);
         }
 
+        [TestMethod]
+        public void TestSqliteGenerate()
+        {
+            TestGenerate(DatabaseType.Sqlite, "PRMVERSION");
+        }
+
+        [TestMethod]
+        public void TestSqliteGenerateAll()
+        {
+            TestGenerate(DatabaseType.Sqlite);
+        }
+
         private void TestGenerate(DatabaseType type, params string[] tableNames)
         {
             var dbType = type.ToString();

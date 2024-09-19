@@ -100,6 +100,24 @@ namespace UnitTest
             TestGetColumnInfosSpeed(GetDatabase(DatabaseType.MySql));
         }
 
+        [TestMethod]
+        public void TestSqliteGetTableInfos()
+        {
+            TestGetTableInfos(GetDatabase(DatabaseType.Sqlite));
+        }
+
+        [TestMethod]
+        public void TestSqliteGetColumnInfos()
+        {
+            TestGetColumnInfos(GetDatabase(DatabaseType.Sqlite));
+        }
+
+        [TestMethod]
+        public void TestSqliteGetColumnInfosSpeed()
+        {
+            TestGetColumnInfosSpeed(GetDatabase(DatabaseType.Sqlite));
+        }
+
         private void TestGetTableInfos(Database db)
         {
             var infos = db.GetTableInfos();

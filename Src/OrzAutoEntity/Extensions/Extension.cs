@@ -44,6 +44,11 @@ namespace System
             return str.Split(separator, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        public static bool IsNotNullAndEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str) == false;
+        }
+
         #region 数据库扩展
         /// <summary>
         /// 转换成字符串
