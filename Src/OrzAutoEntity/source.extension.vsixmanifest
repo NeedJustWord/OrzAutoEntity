@@ -18,5 +18,7 @@
     </Prerequisites>
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="x64\SQLite.Interop.dll" d:VsixSubPath="x64" />
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
     </Assets>
 </PackageManifest>
