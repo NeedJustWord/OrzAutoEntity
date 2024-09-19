@@ -18,6 +18,8 @@ Visual Studio扩展[实体类生成工具](https://github.com/NeedJustWord/OrzAu
 2. Dm
 3. Gbase
 4. Sybase
+5. MySql
+6. Sqlite
 
 
 
@@ -28,10 +30,21 @@ Visual Studio扩展[实体类生成工具](https://github.com/NeedJustWord/OrzAu
 
 
 
-#### v1.0.0使用方法：
+#### 数据库连接字符串：
+
+1. Oracle：Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=MyOracleSID)));User Id=myUsername;Password=myPassword;
+2. Dm：Server=myServerAddress;Port=myPort;Uid=myUsername;Pwd=myPassword;
+3. Gbase：DSN=myDsn;
+4. Sybase：Server=myServerAddress;Port=myPort;Database=myDatabase;Uid=myUsername;Pwd=myPassword;
+5. MySql：Server=myServerAddress;Database=myDatabase;Uid=myUsername;Pwd=myPassword;
+6. Sqlite：Data Source=c:\mydb.db;Version=3;
+
+
+
+#### [v1.0](https://github.com/NeedJustWord/OrzAutoEntity/blob/main/Vsixs/OrzAutoEntity%20v1.0.zip)使用方法：
 
 1. 安装扩展文件
-2. 将下面的配置文件保存成 **__entity.xml** 文件名，放到项目文件 ***.csproj** 所在目录
+2. 将下面的配置文件保存成 **__entity.xml** 文件名(开头两个下划线)，放到项目文件 ***.csproj** 所在目录
 3. 按实际需要修改配置文件
 4. Visual Studio的**解决方案资源管理器**中右键点击项目文件，点击**实体类生成工具**菜单
 5. 在弹出的窗口中**选择数据源**，**勾选需要生成的项**，点击**添加/刷新选中项**按钮生成实体类
@@ -121,7 +134,7 @@ namespace Model.Oracle
     <!--数据库配置，可以有多个Database节点-->
     <DataSource>
         <!--name:数据库名字；type:数据库类型；templateId:模板id；filterId:过滤器id；directory:实体类生成目录；connString:数据库连接字符串-->
-        <Database name="name" type="Oracle" templateId="1" filterId="1" directory="Oracle" connString="*" />
+        <Database name="name" type="Oracle" templateId="1" filterId="1" directory="Oracle" connString="*"/>
     </DataSource>
 </AutoEntity>
 ```
@@ -133,3 +146,11 @@ namespace Model.Oracle
 1. 为什么会有TypeInTable和TypeInView
 
    有些数据库版本里视图字段的AllowNull不准(达梦)，为了兼容，TypeInView都是可空的，TypeInTable则是根据AllowNull确定
+
+2. Gbase如何使用
+
+   先在ODBC 数据源管理程序(ODBC Data Sources)配置好用户DSN，然后数据库连接字符串配置对应的DSN名称即可
+
+3. Gbase执行报错，错误消息：在指定的DSN中，驱动程序和应用程序之间的体系结构不匹配
+
+   因为Visual Studio 2019是32位，驱动是64位；或者Visual Studio 2022是64位，驱动是32位。改成2019使用32位驱动；或者2022使用64位驱动

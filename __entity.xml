@@ -82,6 +82,6 @@ namespace Model.Oracle
     <!--数据库配置，可以有多个Database节点-->
     <DataSource>
         <!--name:数据库名字；type:数据库类型；templateId:模板id；filterId:过滤器id；directory:实体类生成目录；connString:数据库连接字符串-->
-        <Database name="name" type="Oracle" templateId="1" filterId="1" directory="Oracle" connString="*" />
+        <Database name="name" type="Oracle" templateId="1" filterId="1" directory="Oracle" connString="*"/>
     </DataSource>
 </AutoEntity>
