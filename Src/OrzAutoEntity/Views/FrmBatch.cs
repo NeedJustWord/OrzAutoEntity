@@ -190,8 +190,10 @@ namespace OrzAutoEntity.Views
             var fileNames = GetCheckedItems(deleteList);
             if (fileNames.Count == 0) return;
 
+            SetControlEnabled(this, false);
             DTEHelper.RemoveFiles(dbConfig.Directory, fileNames);
             RemoveCheckedItems(deleteList);
+            SetControlEnabled(this, true);
         }
 
         private void RemoveCheckedItems(CheckedListBox clb)
@@ -223,6 +225,8 @@ namespace OrzAutoEntity.Views
         {
             try
             {
+                SetControlEnabled(this, false);
+
                 var fillTables = tables.Where(t => updateTableNames.Contains(t.Name)).ToList();
                 db.FillColumnInfos(fillTables);
 
@@ -248,6 +252,10 @@ namespace OrzAutoEntity.Views
             catch (Exception e)
             {
                 ShowError(e.Message);
+            }
+            finally
+            {
+                SetControlEnabled(this, true);
             }
         }
         #endregion
@@ -276,6 +284,15 @@ namespace OrzAutoEntity.Views
                 if (clb.GetItemChecked(i)) list.Add(clb.GetItemText(clb.Items[i]));
             }
             return list;
+        }
+
+        private void SetControlEnabled(Control control, bool enabled)
+        {
+            control.Enabled = enabled;
+            foreach (Control item in control.Controls)
+            {
+                SetControlEnabled(item, enabled);
+            }
         }
     }
 }
