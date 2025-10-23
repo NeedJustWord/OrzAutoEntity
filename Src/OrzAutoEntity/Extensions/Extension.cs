@@ -80,6 +80,7 @@ namespace System
         /// <returns></returns>
         public static bool AsBool(this object obj, bool defaultValue = false)
         {
+            if (obj is bool boolValue) return boolValue;
             if (obj.IsNull()) return defaultValue;
             switch (obj.ToString().ToUpper())
             {

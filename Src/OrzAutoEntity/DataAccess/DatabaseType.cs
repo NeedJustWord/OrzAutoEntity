@@ -8,5 +8,6 @@
         Sybase,
         MySql,
         Sqlite,
+        SqlServer,
     }
 }

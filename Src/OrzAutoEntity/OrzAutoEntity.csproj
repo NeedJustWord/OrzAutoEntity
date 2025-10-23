@@ -91,6 +91,9 @@
     <PackageReference Include="dmdbms.DmProvider">
       <Version>1.1.0.20739</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Data.SqlClient">
+      <Version>6.1.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.208" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.11.71" />
     <PackageReference Include="MySql.Data">

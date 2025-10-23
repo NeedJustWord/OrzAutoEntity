@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AdoNetCore.AseClient;
 using Dm;
+using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
 using OrzAutoEntity.Helpers;
@@ -733,6 +734,96 @@ select c.TABLE_NAME,
                     column.Scale = int.Parse(scale);
                 }
             }
+        }
+    }
+
+    class SqlServerDatabase : Database
+    {
+        protected override DatabaseType DatabaseType => DatabaseType.SqlServer;
+
+        public SqlServerDatabase(string connStr) : base(connStr)
+        {
+        }
+
+        protected override IDbConnection GetConnection()
+        {
+            return new SqlConnection(connStr);
+        }
+
+        public override List<TableInfo> GetTableInfos()
+        {
+            var sql = @"
+select a.table_name, a.table_type, p.value as comments
+  from (select t.object_id, t.name as table_name, 'N' as table_type
+          from sys.tables t
+        union all
+        select v.object_id, v.name as table_name, 'Y' as table_type
+          from sys.views v) a
+  left join sys.extended_properties p
+    on a.object_id = p.major_id
+   and p.minor_id = 0
+   and p.name = 'MS_Description'";
+            var result = ExecuteReader(sql, null, GetTableInfo).ToList();
+            return result;
+        }
+
+        public override List<TableInfo> FillColumnInfos(List<TableInfo> tableInfos)
+        {
+            Dictionary<string, object> param;
+            string where;
+            if (tableInfos?.Count > 0)
+            {
+                GetParamSql(tableInfos, "@", out var paramSql, out param);
+                where = $" where a.name in ({paramSql})";
+            }
+            else
+            {
+                param = null;
+                where = "";
+            }
+
+            var sql = $@"
+select a.name as table_name,
+       b.name as column_name,
+       p.value as comments,
+       c.name as data_type,
+       case
+         when c.user_type_id = 231 then
+          b.max_length / 2
+         else
+          b.max_length
+       end as data_length,
+       b.precision as data_precision,
+       b.scale as data_scale,
+       b.is_nullable as nullable,
+       b.is_identity as identity_column,
+       isnull(d.is_key, 'N') as is_key
+  from (select object_id, name
+          from sys.tables
+        union all
+        select object_id, name
+          from sys.views) a
+  join sys.columns b
+    on a.object_id = b.object_id
+  join sys.types c
+    on b.user_type_id = c.user_type_id
+  left join (select i.object_id, ic.column_id, 'Y' as is_key
+               from sys.indexes i
+               join sys.index_columns ic
+                 on i.object_id = ic.object_id
+                and i.index_id = ic.index_id
+                and is_primary_key = 1) d
+    on b.object_id = d.object_id
+   and b.column_id = d.column_id
+  left join sys.extended_properties p
+    on b.object_id = p.major_id
+   and b.column_id = p.minor_id
+   and p.name = 'MS_Description'
+{where}
+ order by a.name, b.column_id";
+            var columns = ExecuteReader(sql, param, GetColumnInfo).ToList();
+
+            return Handle(tableInfos, columns);
         }
     }
 }

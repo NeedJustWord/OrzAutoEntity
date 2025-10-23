@@ -84,6 +84,18 @@ namespace UnitTest
             TestGenerate(DatabaseType.Sqlite);
         }
 
+        [TestMethod]
+        public void TestSqlServerGenerate()
+        {
+            TestGenerate(DatabaseType.SqlServer, "tbSysUser");
+        }
+
+        [TestMethod]
+        public void TestSqlServerGenerateAll()
+        {
+            TestGenerate(DatabaseType.SqlServer);
+        }
+
         private void TestGenerate(DatabaseType type, params string[] tableNames)
         {
             var dbType = type.ToString();
