@@ -20,6 +20,7 @@ Visual Studio扩展[实体类生成工具](https://github.com/NeedJustWord/OrzAu
 4. Sybase
 5. MySql
 6. Sqlite
+7. SqlServer
 
 
 
@@ -38,6 +39,13 @@ Visual Studio扩展[实体类生成工具](https://github.com/NeedJustWord/OrzAu
 4. Sybase：Server=myServerAddress;Port=myPort;Database=myDatabase;Uid=myUsername;Pwd=myPassword;
 5. MySql：Server=myServerAddress;Database=myDatabase;Uid=myUsername;Pwd=myPassword;
 6. Sqlite：Data Source=c:\mydb.db;Version=3;
+7. SqlServer：Data Source=myServerAddress;Initial Catalog=myDatabase;User ID=myUsername;Password=myPassword;TrustServerCertificate=True;
+
+
+
+#### [v1.1](https://github.com/NeedJustWord/OrzAutoEntity/blob/main/Vsixs/OrzAutoEntity%20v1.1.zip)更新日志：
+
+1. 支持Sql Server数据库
 
 
 
