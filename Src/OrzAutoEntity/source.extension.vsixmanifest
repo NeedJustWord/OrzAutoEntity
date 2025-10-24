@@ -20,5 +20,8 @@
         <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
         <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="x64\SQLite.Interop.dll" d:VsixSubPath="x64" />
         <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="x86\SQLite.Interop.dll" d:VsixSubPath="x86" />
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Microsoft.Data.SqlClient.SNI.x64.dll" />
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Microsoft.Data.SqlClient.SNI.x86.dll" />
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="File" Path="Microsoft.Data.SqlClient.SNI.arm64.dll" />
     </Assets>
 </PackageManifest>
