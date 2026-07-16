@@ -12,6 +12,7 @@ namespace OrzAutoEntity.Helpers
         public static List<TemplateConfig> Templates { get; private set; }
         public static List<DatabaseConfig> Databases { get; private set; }
         public static List<FilterConfig> Filters { get; private set; }
+        public static List<ColumnConfig> Columns { get; private set; }
 
         /// <summary>
         /// 初始化配置
@@ -25,6 +26,7 @@ namespace OrzAutoEntity.Helpers
             Templates = TemplateConfig.Reload(doc);
             Databases = DatabaseConfig.Reload(doc);
             Filters = FilterConfig.Reload(doc);
+            Columns = ColumnConfig.Reload(doc);
         }
 
         /// <summary>
@@ -50,6 +52,11 @@ namespace OrzAutoEntity.Helpers
         public static FilterConfig GetFilterConfig(string filterId)
         {
             return Filters.FirstOrDefault(t => t.Id == filterId) ?? FilterConfig.Default;
+        }
+
+        public static IEnumerable<ColumnConfig> GetColumnConfig(string[] columnIds)
+        {
+            return Columns.Where(t => columnIds.Contains(t.Id));
         }
 
         private static string GetConfigFullPath(string configPath)

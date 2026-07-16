@@ -55,6 +55,7 @@
     <Compile Include="Helpers\DirectoryHelper.cs" />
     <Compile Include="Helpers\DTEHelper.cs" />
     <Compile Include="Helpers\TypeMapping.cs" />
+    <Compile Include="Modes\ColumnConfig.cs" />
     <Compile Include="Modes\ColumnInfo.cs" />
     <Compile Include="Modes\DatabaseConfig.cs" />
     <Compile Include="Modes\FilterConfig.cs" />

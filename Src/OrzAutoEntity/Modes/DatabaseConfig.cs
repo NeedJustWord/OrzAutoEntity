@@ -23,6 +23,10 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string FilterId { get; set; }
         /// <summary>
+        /// 对应字段配置id列表
+        /// </summary>
+        public string[] ColumnIds { get; set; }
+        /// <summary>
         /// 生成目录
         /// </summary>
         public string Directory { get; set; }
@@ -52,6 +56,7 @@ namespace OrzAutoEntity.Modes
                     Type = node.GetAttribute("type"),
                     TemplateId = node.GetAttribute("templateId"),
                     FilterId = node.GetAttribute("filterId"),
+                    ColumnIds = node.GetAttribute("columnId").SplitRemoveEmptyEntries(','),
                     Directory = node.GetAttribute("directory"),
                     IsSelected = node.GetAttribute("isSelected").AsBool(),
                     ConnString = node.GetAttribute("connString"),

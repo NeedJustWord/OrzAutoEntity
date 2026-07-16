@@ -232,6 +232,11 @@ namespace OrzAutoEntity.Views
                 var fillTables = tables.Where(t => updateTableNames.Contains(t.Name)).ToList();
                 db.FillColumnInfos(fillTables);
 
+                foreach (var item in ConfigHelper.GetColumnConfig(dbConfig.ColumnIds))
+                {
+                    item.Handle(fillTables);
+                }
+
                 var project = DTEHelper.GetSelectedProject();
                 var path = Path.Combine(DTEHelper.GetProjectFullPath(project), dbConfig.Directory);
                 DirectoryHelper.CreateDirectory(path);
