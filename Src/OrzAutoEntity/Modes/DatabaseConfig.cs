@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace OrzAutoEntity.Modes
@@ -26,6 +27,10 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string Directory { get; set; }
         /// <summary>
+        /// 是否选中
+        /// </summary>
+        public bool IsSelected { get; set; }
+        /// <summary>
         /// 数据库连接字符串
         /// </summary>
         public string ConnString { get; set; }
@@ -48,6 +53,7 @@ namespace OrzAutoEntity.Modes
                     TemplateId = node.GetAttribute("templateId"),
                     FilterId = node.GetAttribute("filterId"),
                     Directory = node.GetAttribute("directory"),
+                    IsSelected = node.GetAttribute("isSelected").AsBool(),
                     ConnString = node.GetAttribute("connString"),
                 });
             }

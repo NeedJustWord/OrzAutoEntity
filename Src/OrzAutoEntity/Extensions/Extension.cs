@@ -87,6 +87,7 @@ namespace System
                 case "1":
                 case "Y":
                 case "YES":
+                case "TRUE":
                     return true;
                 default:
                     return false;

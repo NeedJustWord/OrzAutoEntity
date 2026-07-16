@@ -37,6 +37,8 @@ namespace OrzAutoEntity.Views
             InternalReset();
             cbDatabase.Items.Clear();
             ConfigHelper.Databases.ForEach(t => cbDatabase.Items.Add(t));
+            var selected = ConfigHelper.Databases.FirstOrDefault(t => t.IsSelected) ?? ConfigHelper.Databases.FirstOrDefault();
+            cbDatabase.SelectedItem = selected;
         }
 
         #region 加载表数据
