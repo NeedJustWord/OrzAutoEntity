@@ -83,7 +83,8 @@ namespace OrzAutoEntity.Views
             {
                 var filterConfig = ConfigHelper.GetFilterConfig(dbConfig.FilterId);
                 db = DatabaseFactory.GetDatabase(dbConfig.ConnString, dbType);
-                tables = db.GetTableInfos().Filter(filterConfig);
+                tables = db.GetTableInfos();
+                filterConfig.Handle(tables);
 
                 var tableNames = tables.Select(t => t.Name).ToList();
                 var existsEntities = DTEHelper.GetExistsEntities(dbConfig.Directory);

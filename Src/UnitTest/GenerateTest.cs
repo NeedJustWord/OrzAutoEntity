@@ -104,7 +104,8 @@ namespace UnitTest
             var filterConfig = ConfigHelper.GetFilterConfig(dbConfig.FilterId);
 
             var db = DatabaseFactory.GetDatabase(dbConfig.ConnString, type);
-            var tables = db.GetTableInfos().Filter(filterConfig);
+            var tables = db.GetTableInfos();
+            filterConfig.Handle(tables);
             if (tableNames.Length > 0)
             {
                 tables = tables.Where(t => tableNames.Contains(t.Name, StringComparer.OrdinalIgnoreCase)).ToList();

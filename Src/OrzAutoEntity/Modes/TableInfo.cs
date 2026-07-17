@@ -21,14 +21,19 @@ namespace OrzAutoEntity.Modes
         public string Name { get; set; }
 
         /// <summary>
+        /// 实体名
+        /// </summary>
+        public string EntityName { get; set; }
+
+        /// <summary>
         /// 驼峰格式的表名/视图名
         /// </summary>
-        public string CamelName => Name.GetCamelCaseName();
+        public string CamelName => (EntityName ?? Name).GetCamelCaseName();
 
         /// <summary>
         /// 小写格式的表名/视图名
         /// </summary>
-        public string LowerName => Name.ToLower();
+        public string LowerName => (EntityName ?? Name).ToLower();
 
         /// <summary>
         /// 是否是视图
