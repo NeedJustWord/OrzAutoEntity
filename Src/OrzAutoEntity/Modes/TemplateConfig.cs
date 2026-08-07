@@ -10,6 +10,10 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string Id { get; set; }
         /// <summary>
+        /// 文件路径和名称，支持<see cref="TableInfo"/>模板变量
+        /// </summary>
+        public string FilePath { get; set; }
+        /// <summary>
         /// 模板内容
         /// </summary>
         public string Content { get; set; }
@@ -28,6 +32,7 @@ namespace OrzAutoEntity.Modes
                 result.Add(new TemplateConfig
                 {
                     Id = node.GetAttribute("id"),
+                    FilePath = node.GetAttribute("filePath"),
                     Content = node.InnerText.Trim(),
                 });
             }

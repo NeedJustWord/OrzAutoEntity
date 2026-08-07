@@ -1,19 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.IO;
+using System.Text;
 
 namespace System
 {
     static class Extension
     {
         /// <summary>
-        /// 转换为驼峰命名风格
+        /// 转换为大驼峰命名风格
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public static string GetCamelCaseName(this string name)
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Replace("_", "");
+        }
+
+        /// <summary>
+        /// 转换为小驼峰命名风格
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetLowerCamelCaseName(this string name)
+        {
+            var temp = GetCamelCaseName(name);
+            var sb = new StringBuilder(temp);
+            sb[0] = char.ToLower(sb[0]);
+            return sb.ToString();
         }
 
         public static string[] SplitRemoveEmptyEntries(this string str, params char[] separator)
@@ -24,6 +39,34 @@ namespace System
         public static bool IsNotNullAndEmpty(this string str)
         {
             return string.IsNullOrEmpty(str) == false;
+        }
+
+        public static bool IsNullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str);
+        }
+
+        /// <summary>
+        /// 路径分隔
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string[] PathSplit(this string path)
+        {
+            var cleanPath = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            var parts = cleanPath.SplitRemoveEmptyEntries(Path.DirectorySeparatorChar);
+            return parts;
+        }
+
+        /// <summary>
+        /// 路径格式化
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string PathFormat(this string path)
+        {
+            var parts = path.PathSplit();
+            return Path.Combine(parts);
         }
 
         #region 数据库扩展

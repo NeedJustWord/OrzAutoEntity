@@ -14,15 +14,30 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string Name { get; set; }
 
+        private string fieldName;
         /// <summary>
-        /// 驼峰格式的列名
+        /// 字段名
         /// </summary>
-        public string CamelName => Name.GetCamelCaseName();
+        public string FieldName
+        {
+            get { return fieldName ?? Name; }
+            set { fieldName = value; }
+        }
 
         /// <summary>
-        /// 小写格式的列名
+        /// 小驼峰格式的字段名
         /// </summary>
-        public string LowerName => Name.ToLower();
+        public string LowerCamelName => FieldName.GetLowerCamelCaseName();
+
+        /// <summary>
+        /// 大驼峰格式的字段名
+        /// </summary>
+        public string CamelName => FieldName.GetCamelCaseName();
+
+        /// <summary>
+        /// 小写格式的字段名
+        /// </summary>
+        public string LowerName => FieldName.ToLower();
 
         /// <summary>
         /// 注释

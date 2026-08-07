@@ -1,10 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OrzAutoEntity.DataAccess;
 using OrzAutoEntity.Helpers;
-using OrzAutoEntity.Services;
+using OrzAutoEntity.Modes;
 
 namespace UnitTest
 {
@@ -100,12 +99,12 @@ namespace UnitTest
         {
             var dbType = type.ToString();
             var dbConfig = ConfigHelper.GetDatabaseConfig(dbType);
-            var templateConfig = ConfigHelper.GetTemplateConfig(dbConfig.TemplateId);
-            var filterConfig = ConfigHelper.GetFilterConfig(dbConfig.FilterId);
+            var templateConfigs = ConfigHelper.GetTemplateConfig(dbConfig.TemplateIds);
+            var tableFilterConfigs = ConfigHelper.GetFilterConfig(dbConfig.FilterIds, FilterType.Table);
 
             var db = DatabaseFactory.GetDatabase(dbConfig.ConnString, type);
             var tables = db.GetTableInfos();
-            filterConfig.Handle(tables);
+            FilterConfig.Handle(tableFilterConfigs, tables);
             if (tableNames.Length > 0)
             {
                 tables = tables.Where(t => tableNames.Contains(t.Name, StringComparer.OrdinalIgnoreCase)).ToList();
@@ -113,21 +112,10 @@ namespace UnitTest
 
             tables = db.FillColumnInfos(tables);
 
-            var path = "";
-            var dir = Path.Combine(path, dbConfig.Directory);
-            DirectoryHelper.CreateDirectory(dir);
-            foreach (var file in Directory.GetFiles(dir))
-            {
-                File.Delete(file);
-            }
-
-            foreach (var table in tables)
-            {
-                var file = Path.Combine(dir, $"{table.Name}.cs");
-                var content = GenerateService.GetEntityContent(templateConfig.Content, table);
-                GenerateService.SaveFile(file, content);
-            }
-
+            var tableFiles = TableFileInfo.GetTableFileInfos(templateConfigs, tables);
+            var treeNode = TreeNode.CreateTreeNode(dbConfig, tableFiles);
+            var projectFullPath = "";
+            treeNode.GenerateFile(projectFullPath);
             Console.WriteLine($"数量：{tables.Count}");
             Console.WriteLine(tables.ToJson());
         }

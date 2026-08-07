@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
@@ -65,73 +66,100 @@ namespace OrzAutoEntity.Helpers
         public static List<string> GetExistsEntities(string directory)
         {
             var result = new List<string>();
-            var project = GetSelectedProject();
-            if (project == null) return result;
-
-            var items = project.ProjectItems;
-            if (!string.IsNullOrEmpty(directory))
+            if (TryGetProjectItems(directory, out var items) == false)
             {
-                var notFind = true;
-                foreach (ProjectItem item in items)
-                {
-                    if (item.Name.Equals(directory, StringComparison.OrdinalIgnoreCase))
-                    {
-                        items = item.ProjectItems;
-                        notFind = false;
-                        break;
-                    }
-                }
-                if (notFind) return result;
+                return result;
             }
 
-            foreach (ProjectItem item in items)
-            {
-                if (item.Name.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(item.Name.Substring(0, item.Name.Length - ".cs".Length));
-                }
-            }
-
+            GetExistsEntities(items, ref result);
             return result;
         }
 
-        /// <summary>
-        /// 移除指定目录下的文件
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="fileNames"></param>
-        public static void RemoveFiles(string directory, List<string> fileNames)
+        private static bool TryGetProjectItems(string directory, out ProjectItems items)
         {
             var project = GetSelectedProject();
-            if (project == null) return;
-
-            var items = project.ProjectItems;
-            if (!string.IsNullOrEmpty(directory))
+            if (project == null)
             {
-                var notFind = true;
-                foreach (ProjectItem item in items)
-                {
-                    if (item.Name.Equals(directory, StringComparison.OrdinalIgnoreCase))
-                    {
-                        items = item.ProjectItems;
-                        notFind = false;
-                        break;
-                    }
-                }
-                if (notFind) return;
+                items = null;
+                return false;
             }
 
-            foreach (var fileName in fileNames)
+            items = project.ProjectItems;
+            if (directory.IsNullOrEmpty())
             {
-                var fileNameWithExt = $"{fileName}.cs";
-                foreach (ProjectItem item in items)
+                return true;
+            }
+
+            var isFind = true;
+            var parts = directory.PathSplit();
+            foreach (var part in parts)
+            {
+                var findPart = TryFindProjectItem(items, part, out var findItem);
+
+                if (findPart == false)
                 {
-                    if (item.Name.Equals(fileNameWithExt, StringComparison.OrdinalIgnoreCase))
+                    isFind = false;
+                    break;
+                }
+
+                items = findItem.ProjectItems;
+            }
+
+            return isFind;
+        }
+
+        private static void GetExistsEntities(ProjectItems items, ref List<string> result)
+        {
+            var queue = new Queue<Tuple<string, ProjectItem>>(items.Count);
+            foreach (ProjectItem item in items)
+            {
+                queue.Enqueue(new Tuple<string, ProjectItem>(string.Empty, item));
+            }
+
+            while (queue.Count > 0)
+            {
+                var tuple = queue.Dequeue();
+                var parentPath = tuple.Item1;
+                var current = tuple.Item2;
+
+                if (current.Kind == Constants.vsProjectItemKindPhysicalFolder)
+                {
+                    foreach (ProjectItem item in current.ProjectItems)
                     {
-                        item.Remove();
+                        queue.Enqueue(new Tuple<string, ProjectItem>(Path.Combine(parentPath, current.Name), item));
+                    }
+                }
+                else
+                {
+                    result.Add(Path.Combine(parentPath, current.Name));
+                    foreach (ProjectItem item in current.ProjectItems)
+                    {
+                        queue.Enqueue(new Tuple<string, ProjectItem>(parentPath, item));
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 查找<paramref name="name"/>是否存在
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="name"></param>
+        /// <param name="findItem"></param>
+        /// <returns></returns>
+        public static bool TryFindProjectItem(ProjectItems items, string name, out ProjectItem findItem)
+        {
+            foreach (ProjectItem item in items)
+            {
+                if (item.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    findItem = item;
+                    return true;
+                }
+            }
+
+            findItem = null;
+            return false;
         }
     }
 }

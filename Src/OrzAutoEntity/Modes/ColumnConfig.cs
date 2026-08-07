@@ -51,6 +51,7 @@ namespace OrzAutoEntity.Modes
                         ColumnName = item.GetAttribute("columnName"),
                         Skip = item.GetAttribute("skip").AsBool(),
                         ClrType = item.GetAttribute("clrType"),
+                        FieldName = item.GetAttribute("fieldName"),
                     });
                 }
                 result.Add(config);
@@ -99,6 +100,11 @@ namespace OrzAutoEntity.Modes
                 {
                     column.ClrType = item.ClrType;
                 }
+
+                if (item.FieldName.IsNotNullAndEmpty())
+                {
+                    column.FieldName = item.FieldName;
+                }
             }
         }
 
@@ -121,6 +127,11 @@ namespace OrzAutoEntity.Modes
             /// 字段类型
             /// </summary>
             public string ClrType { get; set; }
+
+            /// <summary>
+            /// 字段名
+            /// </summary>
+            public string FieldName { get; set; }
         }
     }
 }

@@ -15,13 +15,13 @@ namespace OrzAutoEntity.Modes
         /// </summary>
         public string Type { get; set; }
         /// <summary>
-        /// 对应模板id
+        /// 对应模板id列表
         /// </summary>
-        public string TemplateId { get; set; }
+        public string[] TemplateIds { get; set; }
         /// <summary>
-        /// 对应过滤器id
+        /// 对应过滤器id列表
         /// </summary>
-        public string FilterId { get; set; }
+        public string[] FilterIds { get; set; }
         /// <summary>
         /// 对应字段配置id列表
         /// </summary>
@@ -54,8 +54,8 @@ namespace OrzAutoEntity.Modes
                 {
                     Name = node.GetAttribute("name"),
                     Type = node.GetAttribute("type"),
-                    TemplateId = node.GetAttribute("templateId"),
-                    FilterId = node.GetAttribute("filterId"),
+                    TemplateIds = node.GetAttribute("templateId").SplitRemoveEmptyEntries(','),
+                    FilterIds = node.GetAttribute("filterId").SplitRemoveEmptyEntries(','),
                     ColumnIds = node.GetAttribute("columnId").SplitRemoveEmptyEntries(','),
                     Directory = node.GetAttribute("directory"),
                     IsSelected = node.GetAttribute("isSelected").AsBool(),

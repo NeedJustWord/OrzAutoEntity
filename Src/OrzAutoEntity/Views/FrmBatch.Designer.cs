@@ -76,6 +76,7 @@ namespace OrzAutoEntity.Views
             // 
             // cbDatabase
             // 
+            this.cbDatabase.DisplayMember = "Name";
             this.cbDatabase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDatabase.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbDatabase.FormattingEnabled = true;
@@ -107,7 +108,7 @@ namespace OrzAutoEntity.Views
             this.btnCancelUpdate.Location = new System.Drawing.Point(219, 485);
             this.btnCancelUpdate.Name = "btnCancelUpdate";
             this.btnCancelUpdate.Size = new System.Drawing.Size(75, 23);
-            this.btnCancelUpdate.TabIndex = 3;
+            this.btnCancelUpdate.TabIndex = 4;
             this.btnCancelUpdate.Text = "全取消";
             this.btnCancelUpdate.UseVisualStyleBackColor = true;
             this.btnCancelUpdate.Click += new System.EventHandler(this.btnCancelUpdate_Click);
@@ -118,7 +119,7 @@ namespace OrzAutoEntity.Views
             this.btnAllUpdate.Location = new System.Drawing.Point(138, 485);
             this.btnAllUpdate.Name = "btnAllUpdate";
             this.btnAllUpdate.Size = new System.Drawing.Size(75, 23);
-            this.btnAllUpdate.TabIndex = 2;
+            this.btnAllUpdate.TabIndex = 3;
             this.btnAllUpdate.Text = "全选";
             this.btnAllUpdate.UseVisualStyleBackColor = true;
             this.btnAllUpdate.Click += new System.EventHandler(this.btnAllUpdate_Click);
@@ -133,7 +134,7 @@ namespace OrzAutoEntity.Views
             this.updateList.Location = new System.Drawing.Point(6, 47);
             this.updateList.Name = "updateList";
             this.updateList.Size = new System.Drawing.Size(288, 420);
-            this.updateList.TabIndex = 1;
+            this.updateList.TabIndex = 2;
             // 
             // txtUpdateFilter
             // 
@@ -142,7 +143,7 @@ namespace OrzAutoEntity.Views
             this.txtUpdateFilter.Location = new System.Drawing.Point(6, 20);
             this.txtUpdateFilter.Name = "txtUpdateFilter";
             this.txtUpdateFilter.Size = new System.Drawing.Size(288, 21);
-            this.txtUpdateFilter.TabIndex = 0;
+            this.txtUpdateFilter.TabIndex = 1;
             this.txtUpdateFilter.TextChanged += new System.EventHandler(this.txtUpdateFilter_TextChanged);
             // 
             // groupBox3
@@ -167,7 +168,7 @@ namespace OrzAutoEntity.Views
             this.btnCancelNew.Location = new System.Drawing.Point(219, 485);
             this.btnCancelNew.Name = "btnCancelNew";
             this.btnCancelNew.Size = new System.Drawing.Size(75, 23);
-            this.btnCancelNew.TabIndex = 3;
+            this.btnCancelNew.TabIndex = 8;
             this.btnCancelNew.Text = "全取消";
             this.btnCancelNew.UseVisualStyleBackColor = true;
             this.btnCancelNew.Click += new System.EventHandler(this.btnCancelNew_Click);
@@ -178,7 +179,7 @@ namespace OrzAutoEntity.Views
             this.btnAllNew.Location = new System.Drawing.Point(138, 485);
             this.btnAllNew.Name = "btnAllNew";
             this.btnAllNew.Size = new System.Drawing.Size(75, 23);
-            this.btnAllNew.TabIndex = 2;
+            this.btnAllNew.TabIndex = 7;
             this.btnAllNew.Text = "全选";
             this.btnAllNew.UseVisualStyleBackColor = true;
             this.btnAllNew.Click += new System.EventHandler(this.btnAllNew_Click);
@@ -193,7 +194,7 @@ namespace OrzAutoEntity.Views
             this.newList.Location = new System.Drawing.Point(6, 47);
             this.newList.Name = "newList";
             this.newList.Size = new System.Drawing.Size(288, 420);
-            this.newList.TabIndex = 1;
+            this.newList.TabIndex = 6;
             // 
             // txtNewFilter
             // 
@@ -202,7 +203,7 @@ namespace OrzAutoEntity.Views
             this.txtNewFilter.Location = new System.Drawing.Point(6, 20);
             this.txtNewFilter.Name = "txtNewFilter";
             this.txtNewFilter.Size = new System.Drawing.Size(288, 21);
-            this.txtNewFilter.TabIndex = 0;
+            this.txtNewFilter.TabIndex = 5;
             this.txtNewFilter.TextChanged += new System.EventHandler(this.txtNewFilter_TextChanged);
             // 
             // groupBox4
@@ -228,7 +229,7 @@ namespace OrzAutoEntity.Views
             this.btnCancelDelete.Location = new System.Drawing.Point(140, 485);
             this.btnCancelDelete.Name = "btnCancelDelete";
             this.btnCancelDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnCancelDelete.TabIndex = 3;
+            this.btnCancelDelete.TabIndex = 12;
             this.btnCancelDelete.Text = "全取消";
             this.btnCancelDelete.UseVisualStyleBackColor = true;
             this.btnCancelDelete.Click += new System.EventHandler(this.btnCancelDelete_Click);
@@ -239,7 +240,7 @@ namespace OrzAutoEntity.Views
             this.btnAllDelete.Location = new System.Drawing.Point(59, 485);
             this.btnAllDelete.Name = "btnAllDelete";
             this.btnAllDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnAllDelete.TabIndex = 2;
+            this.btnAllDelete.TabIndex = 11;
             this.btnAllDelete.Text = "全选";
             this.btnAllDelete.UseVisualStyleBackColor = true;
             this.btnAllDelete.Click += new System.EventHandler(this.btnAllDelete_Click);
@@ -250,7 +251,7 @@ namespace OrzAutoEntity.Views
             this.btnDelete.Location = new System.Drawing.Point(221, 485);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnDelete.TabIndex = 5;
+            this.btnDelete.TabIndex = 13;
             this.btnDelete.Text = "删除";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -265,7 +266,7 @@ namespace OrzAutoEntity.Views
             this.deleteList.Location = new System.Drawing.Point(6, 47);
             this.deleteList.Name = "deleteList";
             this.deleteList.Size = new System.Drawing.Size(290, 420);
-            this.deleteList.TabIndex = 1;
+            this.deleteList.TabIndex = 10;
             // 
             // txtDeleteFilter
             // 
@@ -274,7 +275,7 @@ namespace OrzAutoEntity.Views
             this.txtDeleteFilter.Location = new System.Drawing.Point(6, 20);
             this.txtDeleteFilter.Name = "txtDeleteFilter";
             this.txtDeleteFilter.Size = new System.Drawing.Size(290, 21);
-            this.txtDeleteFilter.TabIndex = 0;
+            this.txtDeleteFilter.TabIndex = 9;
             this.txtDeleteFilter.TextChanged += new System.EventHandler(this.txtDeleteFilter_TextChanged);
             // 
             // statusStrip1
@@ -306,7 +307,7 @@ namespace OrzAutoEntity.Views
             this.btnRefresh.Location = new System.Drawing.Point(676, 614);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(150, 30);
-            this.btnRefresh.TabIndex = 6;
+            this.btnRefresh.TabIndex = 14;
             this.btnRefresh.Text = "添加/刷新选中项";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
@@ -318,7 +319,7 @@ namespace OrzAutoEntity.Views
             this.btnCancel.Location = new System.Drawing.Point(832, 614);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 30);
-            this.btnCancel.TabIndex = 7;
+            this.btnCancel.TabIndex = 15;
             this.btnCancel.Text = "取消";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);

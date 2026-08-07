@@ -6,34 +6,39 @@ namespace OrzAutoEntity.Modes
     public class TableInfo
     {
         /// <summary>
-        /// 文件全路径
+        /// 文件路径
         /// </summary>
-        public string FileFullPath { get; set; }
-
-        /// <summary>
-        /// 文件名
-        /// </summary>
-        public string FileName { get; set; }
+        public string FilePath { get; set; } = string.Empty;
 
         /// <summary>
         /// 表名/视图名
         /// </summary>
         public string Name { get; set; }
 
+        private string entityName;
         /// <summary>
         /// 实体名
         /// </summary>
-        public string EntityName { get; set; }
+        public string EntityName
+        {
+            get { return entityName ?? Name; }
+            set { entityName = value; }
+        }
 
         /// <summary>
-        /// 驼峰格式的表名/视图名
+        /// 小驼峰格式的实体名
         /// </summary>
-        public string CamelName => (EntityName ?? Name).GetCamelCaseName();
+        public string LowerCamelName => EntityName.GetLowerCamelCaseName();
 
         /// <summary>
-        /// 小写格式的表名/视图名
+        /// 大驼峰格式的实体名
         /// </summary>
-        public string LowerName => (EntityName ?? Name).ToLower();
+        public string CamelName => EntityName.GetCamelCaseName();
+
+        /// <summary>
+        /// 小写格式的实体名
+        /// </summary>
+        public string LowerName => EntityName.ToLower();
 
         /// <summary>
         /// 是否是视图

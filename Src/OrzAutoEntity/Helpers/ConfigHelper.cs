@@ -44,14 +44,14 @@ namespace OrzAutoEntity.Helpers
             return Databases.FirstOrDefault(t => t.Type == dbType);
         }
 
-        public static TemplateConfig GetTemplateConfig(string templateId)
+        public static List<TemplateConfig> GetTemplateConfig(string[] templateIds)
         {
-            return Templates.FirstOrDefault(t => t.Id == templateId);
+            return Templates.Where(t => templateIds.Contains(t.Id)).ToList();
         }
 
-        public static FilterConfig GetFilterConfig(string filterId)
+        public static List<FilterConfig> GetFilterConfig(string[] filterIds, FilterType type)
         {
-            return Filters.FirstOrDefault(t => t.Id == filterId) ?? FilterConfig.Default;
+            return Filters.Where(t => t.Type == type && filterIds.Contains(t.Id)).ToList();
         }
 
         public static IEnumerable<ColumnConfig> GetColumnConfig(string[] columnIds)

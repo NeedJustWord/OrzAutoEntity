@@ -111,7 +111,6 @@ namespace OrzAutoEntity
             }
 
             ConfigHelper.Init(configPath);
-            frmBatch.Reset();
             frmBatch.ShowDialog();
         }
     }

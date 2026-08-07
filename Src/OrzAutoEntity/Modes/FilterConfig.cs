@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -7,17 +8,18 @@ namespace OrzAutoEntity.Modes
 {
     public class FilterConfig
     {
-        public static readonly FilterConfig Default = new FilterConfig(string.Empty);
-
         public string Id { get; set; }
 
-        private Dictionary<Operate, Item> dict;
+        public FilterType Type { get; set; }
+
+        private Dictionary<string, Item> dict;
         private delegate bool NameHandle(string name, string key, out string entityName);
 
-        public FilterConfig(string id)
+        public FilterConfig(string id, FilterType type)
         {
             Id = id;
-            dict = new Dictionary<Operate, Item>();
+            Type = type;
+            dict = new Dictionary<string, Item>();
         }
 
         /// <summary>
@@ -31,11 +33,12 @@ namespace OrzAutoEntity.Modes
             var nodes = doc.SelectNodes("AutoEntity/Filters/Filter");
             foreach (XmlElement node in nodes)
             {
-                var config = new FilterConfig(node.GetAttribute("id"));
+                var type = Enum.TryParse<FilterType>(node.GetAttribute("type"), true, out var value) ? value : FilterType.Table;
+                var config = new FilterConfig(node.GetAttribute("id"), type);
                 foreach (XmlElement element in node.SelectNodes("Item"))
                 {
                     var filter = element.InnerText.Trim();
-                    var item = GetItem(element.GetAttribute("operate"), config);
+                    var item = GetItem(element.GetAttribute("operate"), element.GetAttribute("value"), config);
                     if (filter.StartsWith("%"))
                     {
                         if (filter.EndsWith("%"))
@@ -61,46 +64,98 @@ namespace OrzAutoEntity.Modes
             return result;
         }
 
-        private static Item GetItem(string operateStr, FilterConfig config)
+        private static Item GetItem(string operateStr, string valueStr, FilterConfig config)
         {
-            Operate operate;
-            if (operateStr.IsNotNullAndEmpty() && Enum.TryParse<Operate>(operateStr, true, out var value))
+            FilterOperate operate;
+            if (operateStr.IsNotNullAndEmpty() && Enum.TryParse<FilterOperate>(operateStr, true, out var value))
             {
                 operate = value;
             }
             else
             {
-                operate = Operate.Skip;
+                operate = FilterOperate.Skip;
             }
 
-            if (config.dict.TryGetValue(operate, out var item))
+            var key = operate == FilterOperate.SetPath || operate == FilterOperate.SetEntityName ? $"{GetOperateKeyPrefix(operate)}{valueStr}" : operate.ToString();
+            if (config.dict.TryGetValue(key, out var item))
             {
                 return item;
             }
 
             item = new Item();
-            config.dict[operate] = item;
+            config.dict[key] = item;
             return item;
         }
 
-        /// <summary>
-        /// 对表字段进行处理
-        /// </summary>
-        /// <param name="tables"></param>
-        public void Handle(List<TableInfo> tables)
+        private static string GetOperateKeyPrefix(FilterOperate operate)
         {
-            if (dict.TryGetValue(Operate.Skip, out var item))
+            return $"{operate.ToString()}:";
+        }
+
+        /// <summary>
+        /// 对实体类进行处理
+        /// </summary>
+        /// <param name="filters"></param>
+        /// <param name="tables"></param>
+        public static void Handle(List<FilterConfig> filters, List<string> modelPaths)
+        {
+            foreach (var filter in filters)
+            {
+                filter.Handle(modelPaths);
+            }
+        }
+
+        private void Handle(List<string> modelPaths)
+        {
+            if (dict.TryGetValue(FilterOperate.Skip.ToString(), out var item))
             {
                 if (item.Count > 0)
                 {
-                    tables.RemoveAll(t => item.EqualsFilter.Any(x => t.Name.Equals(x))
-                                       || item.StartsWithFilter.Any(x => t.Name.StartsWith(x))
-                                       || item.EndsWithFilter.Any(x => t.Name.EndsWith(x))
-                                       || item.ContainsFilter.Any(x => t.Name.Contains(x)));
+                    modelPaths.RemoveAll(t => item.IsMatch(Path.GetFileName(t)));
                 }
             }
 
-            if (dict.TryGetValue(Operate.Trim, out item))
+            if (dict.TryGetValue(FilterOperate.Include.ToString(), out item))
+            {
+                if (item.Count > 0)
+                {
+                    modelPaths.RemoveAll(t => item.IsMatch(Path.GetFileName(t)) == false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 对表进行处理
+        /// </summary>
+        /// <param name="filters"></param>
+        /// <param name="tables"></param>
+        public static void Handle(List<FilterConfig> filters, List<TableInfo> tables)
+        {
+            foreach (var filter in filters)
+            {
+                filter.Handle(tables);
+            }
+        }
+
+        private void Handle(List<TableInfo> tables)
+        {
+            if (dict.TryGetValue(FilterOperate.Skip.ToString(), out var item))
+            {
+                if (item.Count > 0)
+                {
+                    tables.RemoveAll(t => item.IsMatch(t.Name));
+                }
+            }
+
+            if (dict.TryGetValue(FilterOperate.Include.ToString(), out item))
+            {
+                if (item.Count > 0)
+                {
+                    tables.RemoveAll(t => item.IsMatch(t.Name) == false);
+                }
+            }
+
+            if (dict.TryGetValue(FilterOperate.Trim.ToString(), out item))
             {
                 if (item.StartsWithFilter.Count > 0)
                 {
@@ -114,6 +169,34 @@ namespace OrzAutoEntity.Modes
                     foreach (var temp in item.EndsWithFilter)
                     {
                         Handle(temp, tables, EndsWithHandle);
+                    }
+                }
+            }
+
+            var key = GetOperateKeyPrefix(FilterOperate.SetPath);
+            foreach (var keyValue in dict.Where(t => t.Key.StartsWith(key)))
+            {
+                var path = keyValue.Key.Substring(key.Length);
+                item = keyValue.Value;
+                foreach (var table in tables)
+                {
+                    if (item.IsMatch(table.Name))
+                    {
+                        table.FilePath = path;
+                    }
+                }
+            }
+
+            key = GetOperateKeyPrefix(FilterOperate.SetEntityName);
+            foreach (var keyValue in dict.Where(t => t.Key.StartsWith(key)))
+            {
+                var entityName = keyValue.Key.Substring(key.Length);
+                item = keyValue.Value;
+                foreach (var table in tables)
+                {
+                    if (item.IsMatch(table.Name))
+                    {
+                        table.EntityName = entityName;
                     }
                 }
             }
@@ -154,7 +237,7 @@ namespace OrzAutoEntity.Modes
             return false;
         }
 
-        enum Operate
+        enum FilterOperate
         {
             /// <summary>
             /// 跳过
@@ -162,9 +245,24 @@ namespace OrzAutoEntity.Modes
             Skip,
 
             /// <summary>
+            /// 包含
+            /// </summary>
+            Include,
+
+            /// <summary>
             /// 移除前导匹配项或尾部匹配项
             /// </summary>
             Trim,
+
+            /// <summary>
+            /// 设置路径
+            /// </summary>
+            SetPath,
+
+            /// <summary>
+            /// 设置实体名
+            /// </summary>
+            SetEntityName,
         }
 
         class Item
@@ -201,6 +299,27 @@ namespace OrzAutoEntity.Modes
                 EndsWithFilter = new List<string>();
                 ContainsFilter = new List<string>();
             }
+
+            public bool IsMatch(string name)
+            {
+                return EqualsFilter.Any(x => name.Equals(x, StringComparison.OrdinalIgnoreCase))
+                    || StartsWithFilter.Any(x => name.StartsWith(x, StringComparison.OrdinalIgnoreCase))
+                    || EndsWithFilter.Any(x => name.EndsWith(x, StringComparison.OrdinalIgnoreCase))
+                    || ContainsFilter.Any(x => name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
         }
+    }
+
+    public enum FilterType
+    {
+        /// <summary>
+        /// 表
+        /// </summary>
+        Table,
+
+        /// <summary>
+        /// 实体类
+        /// </summary>
+        Model,
     }
 }
