@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="OrzAutoEntity.da27ae82-b798-4807-9810-670c957071fb" Version="1.1" Language="zh-CN" Publisher="NeedJustWord" />
+        <Identity Id="OrzAutoEntity.da27ae82-b798-4807-9810-670c957071fb" Version="2.0" Language="zh-CN" Publisher="NeedJustWord" />
         <DisplayName>OrzAutoEntity</DisplayName>
         <Description xml:space="preserve">实体类生成工具，更多信息请参阅https://github.com/NeedJustWord/OrzAutoEntity</Description>
         <MoreInfo>https://github.com/NeedJustWord/OrzAutoEntity</MoreInfo>

@@ -3,7 +3,7 @@
     <!--模板配置，可以有多个Template节点-->
     <Templates>
         <!--id:模板id；<![CDATA[XXX]]>:XXX为模板内容-->
-        <Template id="1">
+        <Template id="1" filePath="${Table.CamelName}.cs">
             <![CDATA[
 /* ============================
  * 本文件由实体类生成工具生成，请勿手动更改
@@ -49,20 +49,46 @@ namespace Model.Oracle
         </Template>
     </Templates>
 
-    <!--数据库表过滤配置，符合条件的表不会生成实体类，可以有多个Filter节点-->
+    <!--匹配配置，可以有多个Filter节点-->
     <Filters>
-        <!--id:过滤器id-->
-        <Filter id="1">
-            <!--过滤表名以X1或X2结尾的-->
+        <!--id:匹配id，type:匹配类型，表-->
+        <Filter id="1" type="table">
+            <!--匹配表名以X1或X2结尾的，执行过滤操作-->
             <Item>%X1|X2</Item>
-            <!--过滤表名以X1或X2开头的-->
-            <Item>X1|X2%</Item>
-            <!--过滤表名包含X1或X2的-->
-            <Item>%X1|X2%</Item>
-            <!--过滤表名为X1或X2的-->
-            <Item>X1|X2</Item>
+            <!--匹配表名以X1或X2开头的，执行过滤操作-->
+            <Item operate="skip">X1|X2%</Item>
+            <!--匹配表名包含X1或X2的，执行包含操作-->
+            <Item operate="include">%X1|X2%</Item>
+            <!--匹配表名以X1或X2开头的，设置其实体名为其表名去掉X1或X2前缀-->
+            <Item operate="trim">X1|X2%</Item>
+            <!--匹配表名以X1或X2结尾的，设置其实体名为其表名去掉X1或X2后缀-->
+            <Item operate="trim">%X1|X2</Item>
+            <!--匹配表名为X1或X2的，设置其实体类生成路径为path1\path2-->
+            <Item operate="setPath" value="path1\path2">X1|X2</Item>
+            <!--匹配表名为X1的，设置其实体名为entity-->
+            <Item operate="setEntityName" value="entity">X1</Item>
+        </Filter>
+        <!--id:匹配id，type:匹配类型，实体类-->
+        <Filter id="2" type="model">
+            <!--匹配实体类文件名以X1或X2结尾的，执行过滤操作-->
+            <Item>%X1|X2</Item>
+            <!--匹配实体类文件名以X1或X2开头的，执行过滤操作-->
+            <Item operate="skip">X1|X2%</Item>
+            <!--匹配实体类文件名包含X1或X2的，执行包含操作-->
+            <Item operate="include">%X1|X2%</Item>
+            <!--匹配实体类文件名为X1或X2，执行包含操作-->
+            <Item operate="include">X1|X2</Item>
         </Filter>
     </Filters>
+
+    <!--数据库表字段配置，可以有多个Column节点-->
+    <Columns>
+        <!--字段配置,其下可以有多个Item节点。id:字段配置id；tableName:表名或视图名，非空时针对指定表或视图，为空时针对所有表或视图-->
+        <Column id="1" tableName="">
+            <!--columnName:字段名；skip:生成实体类时是否跳过；clrType:字段类型；FieldName:字段名-->
+            <Item columnName="id" skip="true" clrType="Guid" fieldName="key"/>
+        </Column>
+    </Columns>
 
     <!--数据库类型匹配配置，可以有多个Mapping节点-->
     <TypeMapping>
@@ -81,7 +107,7 @@ namespace Model.Oracle
 
     <!--数据库配置，可以有多个Database节点-->
     <DataSource>
-        <!--name:数据库名字；type:数据库类型；templateId:模板id；filterId:过滤器id；directory:实体类生成目录；connString:数据库连接字符串-->
-        <Database name="name" type="Oracle" templateId="1" filterId="1" directory="Oracle" connString="*"/>
+        <!--name:数据库名字；type:数据库类型；templateId:模板id集合；filterId:匹配id集合；columnId:字段配置id集合；directory:实体类生成目录；isSelected:界面加载时是否选中；connString:数据库连接字符串-->
+        <Database name="name" type="Oracle" templateId="1" filterId="1" columnId="1" directory="Oracle" isSelected="true" connString="*"/>
     </DataSource>
 </AutoEntity>

@@ -9,3 +9,4 @@ bin
 TestResults
 .vs
 /Src/OrzAutoEntity/__entity.xml
+/*.log
